@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "deploy": "gcloud run deploy check-health --source . --region europe-north1",
-    "dev": "nodemon server.js",
+    "dev": "nodemon --env-file=.env server.js",
     "cloud-sql-proxy": "./cloud-sql-proxy check-health-437712:us-central1:check-health &",
     "download-cloud-sql-proxy": "curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.13.0/cloud-sql-proxy.darwin.amd64",
     "logs-tail": "gcloud run services logs read check-health --limit=10 --project check-health-437712 --region europe-north1",
@@ -20,8 +20,11 @@
   "dependencies": {
     "@google-cloud/cloud-sql-connector": "^1.4.0",
     "axios": "^1.7.7",
+    "cors": "^2.8.5",
     "express": "^4.21.0",
+    "express-jwt": "^8.4.1",
     "express-ws": "^5.0.2",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
     "pg": "^8.13.0",
     "ws": "^8.18.0"
