@@ -3,7 +3,7 @@ import auth from '../auth/auth.js';
 
 const router = Router();
 
-router.post("/profile", auth.optional, async function (req, res, next) {
+router.get("/profile", auth.required, async function (req, res, next) {
     console.log('POST: api/profile', req.body.username);
 
     try {

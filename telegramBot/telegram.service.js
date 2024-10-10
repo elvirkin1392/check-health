@@ -44,6 +44,7 @@ const sendTGMessage = ({id, message}) => {
 }
 
 const addTGUpdates = (result) => {
+    console.log('inside addTGUpdates', result, result.update_id);
     try {
         if (result && result.update_id) {
             console.log('result.update_id', result.update_id);
@@ -90,7 +91,7 @@ const sendTGLoginMessage = (username) => {
     if (!users[username]?.chat_id) {
         return false;
     }
-    return false; //TODO remove
+
     return axios.post(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
         chat_id: users[username].chat_id,
         text: 'Do you want to login?',

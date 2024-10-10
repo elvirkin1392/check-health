@@ -11,7 +11,7 @@ router.post("/auth", auth.optional, async function (req, res, next) {
         const user = await login(req.body.username);
         res.json(user);
     } catch (error) {
-        next(error);
+        next(error.message);
     }
 })
 export default router;

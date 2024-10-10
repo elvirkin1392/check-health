@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(routes);
 
 app.use('/node_modules/axios', express.static(path.join(__dirname, 'node_modules/axios')));
-app.use('/', express.static(path.join(__dirname, 'static'), {extensions: ['html']}));
+app.use('/', express.static(path.join(__dirname, 'client/dist'), {extensions: ['html']}));
 
 app.get('/api/test', (_, res) => {
     users.mrshomesoul.authorization = {
@@ -25,12 +25,12 @@ app.get('/api/test', (_, res) => {
     };
     res.send('ok')
 })
-
-app.post('/api/sendMessage', async function (req, res) {
-    await sendTGMessage({id: CHAT_ID, message: 'hello'})
-
-    res.send('sent');
-})
+//
+// app.post('/api/sendMessage', async function (req, res) {
+//     await sendTGMessage({id: CHAT_ID, message: 'hello'})
+//
+//     res.send('sent');
+// })
 
 
 const port = parseInt(process.env.PORT) || 3000;

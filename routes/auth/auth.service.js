@@ -14,10 +14,10 @@ const getCurrentUser = () => {
 
 const login = async (username) => {
     if (!username) {
-        throw new HttpException(422, {errors: {username: ["can't be blank"]}});
+        throw new HttpException(422, "username can't be blank");
     }
     if (!users[username]) {
-        throw new HttpException(422, {errors: "no user found"});
+        throw new HttpException(422, "no user found");
     }
     //TODO if there is no username, when should we create a user?
 
@@ -31,7 +31,7 @@ const login = async (username) => {
                 username: user.username,
                 bio: user.bio,
                 image: user.image,
-                token: generateToken(user.chat_id),
+                accessToken: generateToken(user.chat_id),
             }
             //close login session
             users[username].authorization = {
@@ -42,17 +42,19 @@ const login = async (username) => {
         return result;
     }
 
-    try {
-        const result = await sendTGLoginMessage(username);
-        // login session start
-        users[username].authorization = {
-            status: 'pending', //ready, pending, null
-            isAuthenticated: false
-        }
+    if (users[username].authorization.status !== 'pending') {
+        try {
+            const result = await sendTGLoginMessage(username);
+            // login session start
+            users[username].authorization = {
+                status: 'pending', //ready, pending, null
+                isAuthenticated: false
+            }
 
-        console.log('Do you want to login?', result.data);
-    } catch (error) {
-        console.log('Error response TG', error);
+            console.log('Do you want to login?', result.data);
+        } catch (error) {
+            console.log('Error response TG', error);
+        }
     }
 
     return {result: 'pending'};

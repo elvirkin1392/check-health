@@ -24,10 +24,10 @@ router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
 
 //api for TG, get updates
 router.post('/listenWebHook', auth.optional, async function (req, res, next) {
-    const result = req.body;
-    console.log('listenWebHook', result);
+    const request = req.body;
+    console.log('listenWebHook', request);
     try {
-        const result = await addTGUpdates(result)
+        const result = await addTGUpdates(request)
         res.json(result);
     } catch (error) {
         next(error);

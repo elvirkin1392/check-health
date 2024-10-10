@@ -1,0 +1,10 @@
+:root {
+  font-family: monospace, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+body input, body button {
+  box-sizing: border-box;
+  border: none;
+  font-family: monospace, Arial, sans-serif;
+}
