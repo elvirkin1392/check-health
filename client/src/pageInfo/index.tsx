@@ -1,22 +1,31 @@
 import axios from "axios";
 import styled from "styled-components";
 import getCalendar from './getCalendar.tsx';
-import {infoData,  healthydays} from './mock.tsx';
+import {infoData, healthydays} from './mock.tsx';
+import Calendar from "./Calendar";
+import HealthyDays from "./HealthyDays";
+import Sidebar from "./Sidebar";
+import Table from "./Table"
 
-const date = new Date();
-const currentMonth = date.toLocaleString('default', {month: 'long'}).toLowerCase();
 
-const range = getCalendar();
-const handleTest = () => {
-  axios.get('api/profile').then((response) => {
-    console.log('response', response)
-  })
-}
+// const handleTest = () => {
+//   axios.get('api/profile').then((response) => {
+//     console.log('response', response)
+//   })
+// }
 
 const PageInfo = () => {
   return (
     <Container>
-      <div className='month'>
+      <div style={{flex: "auto"}}>
+        <Calendar/>
+        <Container>
+          <HealthyDays/>
+          <Table/>
+        </Container>
+      </div>
+      <Sidebar/>
+      {/*<div className='month'>
         {currentMonth}
       </div>
       <Days>
@@ -42,16 +51,19 @@ const PageInfo = () => {
         <div className='rightSide'>
           this body <br/>
           has worked <br/>
-          <Healtydays>{healthydays}</Healtydays> days <br/>
+          <Healthydays>{healthydays}</Healthydays> days <br/>
           without <br/>
           a lost time <br/>
           accidents
         </div>
-      </Main>
+      </Main>*/}
     </Container>
   );
 };
-
+const Container = styled.div`
+  display: flex;
+  justify-content: stretch;
+`
 const Days = styled.div`
   display: flex;
   justify-content: center;
@@ -69,44 +81,43 @@ const Days = styled.div`
     }
   }
 `;
-const Healtydays = styled.span`
-  background-color: #D9D9D9;
-  padding: 5px 15px;
-`
-const Main = styled.div`
-  display: flex;
-  justify-content: stretch;
-  height: 80vh;
-
-  & div {
-    width: 100%;
-
-    align-self: center;
-    font-size: 48px;
-    margin: 0 100px;
-  }
-
-  & .rightSide {
-    font-family: monospace;
-    text-align: end;
-  }
-
-  & table {
-    font-family: monospace;
-    font-size: 28px;
-    font-weight: lighter;
-  }
-
-  & td {
-    padding: 0 50px;
-  }
-`
-const Container = styled.div`
-  & .month {
-    color: #999999;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-`
+// const Healthydays = styled.span`
+//   background-color: #fff;
+//   padding: 5px 15px;
+// `
+// const Main = styled.div`
+//   display: flex;
+//   justify-content: stretch;
+//   height: 80vh;
+//
+//   & div {
+//     width: 100%;
+//
+//     align-self: center;
+//     font-size: 48px;
+//     margin: 0 100px;
+//   }
+//
+//   & .rightSide {
+//     font-family: monospace;
+//     text-align: end;
+//   }
+//
+//   & table {
+//     font-family: monospace;
+//     font-size: 28px;
+//     font-weight: lighter;
+//   }
+//
+//   & td {
+//     padding: 0 50px;
+//   }
+// `
+// const Container = styled.div`
+//   & .month {
+//     color: #999999;
+//     text-align: center;
+//     padding: 20px 0;
+//   }
+// `
 export default PageInfo;

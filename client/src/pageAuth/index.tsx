@@ -1,73 +1,27 @@
 import styled from 'styled-components'
 import {useState} from "react";
-import {instance as axios} from '../axios.tsx'
+import {Button, Input} from '../components';
+import {waitLoginResponse} from "./api";
 
-const PageAuth = ({onAuthorize} : { onAuthorize: Function; }) => {
+//TODO replace onatuhorize with state managment
+const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
   const [username, setUsername] = useState('');
+
   const handleLogin = () => {
-
-    let pollingCounter = 150; //times will be send requests ~5 min
-    async function subscribe() {
-      if (pollingCounter === 0) {
-        onAuthorize(false);
-        return;
-      }
-      console.log('looong poling')
-      let response = await axios.post('/api/auth',
-        {
-          username: username
-        });
-
-      if (response.status == 502) {
-        pollingCounter--;
-        await subscribe();
-      } else if (response.status != 200) {
-        console.log('Error authorization', response.statusText);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        pollingCounter--;
-        await subscribe();
-      } else {
-        // Получить сообщение
-        let message = await response.data;
-
-        if (!message.accessToken) {
-          setTimeout(async () => {
-            pollingCounter--;
-            await subscribe()
-          }, 2000)
-        }
-        if (message.accessToken) {
-          localStorage.setItem('accessToken', message.accessToken);
-          onAuthorize(true);
-          axios.interceptors.request.use(config => {
-            config.headers.Authorization = message.accessToken ? `Bearer ${message.accessToken}` : '';
-            return config;
-          });
-          console.log('User authorized', message);
-        }
-      }
-    }
-
-    subscribe();
-
-  }
-
-  const handleTest = () => {
-    axios.get('/api/test')
-      .then(result => {
-        console.log('test', result.data)
-      })
-      .catch(error => console.log('error test', error.message));
+    waitLoginResponse(onAuthorize, {username})
   }
 
   return (
     <Container>
-      <div>check-health</div>
-      <input type="text"
-             placeholder='@username'
-             onChange={(event) => setUsername(event.target.value)}/>
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleTest}>Test</button>
+      <div style={{color: '#6b6b6b'}}>check-health</div>
+      <div className='prefix'>
+        <Input type="text"
+               className='input'
+               placeholder='username'
+               value={username}
+               onChange={(event) => setUsername(event.target.value)}/>
+      </div>
+      <Button onClick={handleLogin}>Login</Button>
     </Container>
   );
 };
@@ -81,25 +35,31 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
 
+
   & * {
     margin-bottom: 10px;
   }
 
-  & input {
-    background-color: #D9D9D9;
-    height: 50px;
-    width: 280px;
-    padding: 10px;
-
-    &::placeholder {
-      color: white;
-    }
+  & .prefix {
+    position: relative;
   }
 
-  & button {
-    background-color: #D9D9D9;
-    height: 50px;
-    width: 160px;
+  & .input {
+    padding-left: 30px;
+  }
+
+  & .prefix:before {
+    content: '@';
+    color: #c3c3c3;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    display: block;
+    margin: 8px;
+    z-index: 1;
   }
 `
+
 export default PageAuth;

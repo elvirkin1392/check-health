@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   },
 ]);
 export default function App() {
-  const [isAuthorized, setAuthorized] = useState(false);
+  const [isAuthorized, setAuthorized] = useState(true);
 
   const authorize = (value: boolean) => {
     setAuthorized(value);
@@ -26,7 +26,7 @@ export default function App() {
   return (
     <div>
       {isAuthorized ? <div>
-        <Header/>
+        {/*<Header/>*/}
         <div style={{marginTop: '50px'}}>
           <RouterProvider router={router}/>
         </div>

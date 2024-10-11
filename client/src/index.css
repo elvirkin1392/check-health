@@ -2,7 +2,14 @@
   font-family: monospace, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  background: linear-gradient(45deg, #e3e3e3, #e7e6ff);
+  height: 100vh;
 }
+
+body {
+  background: linear-gradient(45deg, #e3e3e3, #e7e6ff);
+}
+
 body input, body button {
   box-sizing: border-box;
   border: none;

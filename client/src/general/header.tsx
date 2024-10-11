@@ -3,10 +3,10 @@ import styled from 'styled-components';
 const Header = () => {
   return (
     <Container>
-      <RightSide>
+      <LeftSide>
         <Logo/>
         <Title>check-health</Title>
-      </RightSide>
+      </LeftSide>
 
       <Username>Elvira S</Username>
     </Container>
@@ -19,25 +19,25 @@ const Container = styled.div`
   left: 0;
   height: 50px;
   width: 100%;
-  background: #ECECEC;
+  background: #fff;
   display: flex;
   justify-content: space-between;
   vertical-align: middle;
   align-items: center;
 `
-const RightSide = styled.div`
+const LeftSide = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 300px;
+  width: 270px;
 `
 const Username = styled.div`
-  color: #000;
+  color: #6b6b6b;
   font-family: monospace;
   font-size: 16px;
-  margin-right: 30px;
+  margin-right: 110px;
 `
 const Title = styled.div`
-  color: #000;
+  color: #6b6b6b;
   font-family: monospace;
   font-size: 16px;
 `
