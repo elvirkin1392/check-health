@@ -1,128 +1,88 @@
-import axios from "axios";
 import {createUser, updateUser, updateUserLoginStatus} from '../routes/auth/auth.service.js'
 import {users} from "../mock.js";
+import {getCommand} from "./telegram.utils.js";
+import {commandsEnum} from './telegram.enums.js';
+import {sendMessage} from "./telegram.api.js";
 
-const TG_TOKEN = process.env.CHECK_HEALTH_TELEGRAM_BOT_TOKEN;
-const switchOnTGWebhook = () => {
-    return axios.post(`https://api.telegram.org/bot${TG_TOKEN}/setWebhook`, {
-        url: 'https://check-health-417373288113.europe-north1.run.app/api/listenWebHook'
-    }).catch((error) => {
-        return (error)
+const sendCommandResponse = (user, command) => {
+  const { chat_id: chatId, username } = user;
+
+  // if (!users[username]) {
+  //   return null;
+  // }
+
+  const options = getCommand(command);
+
+  return sendMessage(chatId, options);
+}
+
+const addTGUpdates = (payload) => {
+  console.log('inside addTGUpdates', payload, payload.update_id);
+
+  if (!payload || !payload.update_id) {
+    return;
+  }
+  console.log('payload.update_id', payload.update_id);
+
+  if (payload.entities && payload.entities.type === 'bot_command') {
+    sendCommandResponse(payload.from, payload.text);
+    return;
+  }
+
+  if (payload.message) {
+    //TODO response to only commands
+    console.log('payload.message', payload.message);
+
+    const user = updateUser({
+      userData: payload.message.from,
+      message: payload.message.text
     });
-}
 
-const switchOffTGWebhook = () => {
-    return axios.get(`https://api.telegram.org/bot${TG_TOKEN}/getWebhookInfo`)
-        .then((response) => {
-            console.log('getWebhookInfo', response.data);
-        })
-        .catch(function (error) {
-            console.log("Error getWebhookInfo", error);
-            return (error)
-        });
-}
+    return;
+  }
 
-const getTGWebhookInfo = () => {
-    return axios.post(`https://api.telegram.org/bot${TG_TOKEN}/setWebhook`, {
-        url: ''
-    }).catch((error) => {
-        return (error)
-    });
-}
-
-const sendTGMessage = ({id, message}) => {
-    return axios.post(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        chat_id: id,
-        text: message
-    })
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-}
-
-const addTGUpdates = (result) => {
-    console.log('inside addTGUpdates', result, result.update_id);
-    try {
-        if (result && result.update_id) {
-            console.log('result.update_id', result.update_id);
-            if (result.message) {
-                console.log('result.message', result.message);
-
-                const user = updateUser({
-                    userData: result.message.from,
-                    message: result.message.text
-                });
-            } else if (result.callback_query) {
-                //callback for login
-                const callbackData = JSON.parse(result.callback_query.data);
-                if (callbackData.command === 'login' && callbackData.isReadyToLogin) {
-                    const user = updateUserLoginStatus({
-                        userData: result.callback_query.from,
-                        isReadyToLogin: true
-                    });
-                    console.log('result.callback_query', user)
-                } else if (callbackData.command === 'login' && !callbackData.isReadyToLogin) {
-                    const user = updateUserLoginStatus({
-                        userData: result.callback_query.from,
-                        isReadyToLogin: false
-                    });
-                    console.log('got user login status', user);
-                }
-            } else if (result.edited_message) {
-                console.log('result.edited_message', result.edited_message);
-                const user = updateUser({
-                    userData: result.edited_message.from,
-                    message: result.edited_message.text
-                });
-
-            }
-        }
-    } catch (error) {
-        return error;
+  if (payload.callback_query) {
+    //callback for login
+    const callbackData = JSON.parse(payload.callback_query.data);
+    if (callbackData.command === 'login' && callbackData.isReadyToLogin) {
+      const user = updateUserLoginStatus({
+        userData: payload.callback_query.from,
+        isReadyToLogin: true
+      });
+      console.log('payload.callback_query', user)
+    } else if (callbackData.command === 'login' && !callbackData.isReadyToLogin) {
+      const user = updateUserLoginStatus({
+        userData: payload.callback_query.from,
+        isReadyToLogin: false
+      });
+      console.log('got user login status', user);
     }
-    console.log('end addTGUpdates')
-    return {message: 'ok'}
+
+    return
+  }
+
+  if (payload.edited_message) {
+    console.log('payload.edited_message', payload.edited_message);
+    const user = updateUser({
+      userData: payload.edited_message.from,
+      message: payload.edited_message.text
+    });
+
+    return;
+  }
 }
 
 const sendTGLoginMessage = (username) => {
-    if (!users[username]?.chat_id) {
-        return false;
-    }
-
-    return axios.post(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        chat_id: users[username].chat_id,
-        text: 'Do you want to login?',
-        reply_markup: {
-            inline_keyboard: [
-                [
-                    {
-                        text: 'yes',
-                        callback_data: JSON.stringify({
-                            command: 'login',
-                            isReadyToLogin: true
-                        })
-                    },
-                    {
-                        text: 'no',
-                        callback_data: JSON.stringify({
-                            command: 'login',
-                            isReadyToLogin: false
-                        })
-                    }]
-            ],
-            one_time_keyboard: true
-        }
-    }).catch(error => error)
+  if (!users[username]?.chat_id) {
+    return false;
+  }
+  const chatID = users[username].chat_id
+  const options = getCommand(commandsEnum.login.commandKey, chatID)
+  return sendMessage(options)
 }
 
 export {
-    switchOnTGWebhook,
-    switchOffTGWebhook,
-    addTGUpdates,
-    sendTGLoginMessage,
-    getTGWebhookInfo,
-    sendTGMessage
+  addTGUpdates,
+  sendTGLoginMessage,
+  sendCommandResponse
 }

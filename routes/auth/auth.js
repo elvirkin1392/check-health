@@ -1,5 +1,4 @@
 import { expressjwt as jwt } from 'express-jwt';
-import * as express from 'express';
 
 const getTokenFromHeaders = (req) => {
     if (

@@ -1,36 +1,37 @@
 import {Router} from 'express';
 import auth from '../auth/auth.js';
-import {switchOnTGWebhook, switchOffTGWebhook, addTGUpdates} from '../../telegramBot/telegram.service.js'
+import { addTGUpdates} from '../../telegramBot/telegram.service.js'
+import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.js";
 
 const router = Router();
 
 router.get('/switchOnWebhook', auth.required, async function (req, res, next) {
     try {
-        const result = await switchOnTGWebhook()
+        const result = await setWebhook()
         res.json(result);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: error?.message });
     }
 })
 
 router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
     try {
-        const result = await switchOffTGWebhook()
+        const result = await unsetWebhook()
         res.json(result);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: error?.message });
     }
 })
 
 //api for TG, get updates
-router.post('/listenWebHook', auth.optional, async function (req, res, next) {
-    const request = req.body;
-    console.log('listenWebHook', request);
+router.post('/listenWebHook', auth.optional, async function (req, res) {
+    const body = req.body;
+    console.log('listenWebHook', body);
     try {
-        const result = await addTGUpdates(request)
-        res.json(result);
+        await addTGUpdates(body)
+        res.sendStatus(200);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: error?.message });
     }
 })
 

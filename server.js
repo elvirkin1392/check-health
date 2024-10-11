@@ -4,7 +4,7 @@ import express from 'express';
 import {fileURLToPath} from 'node:url';
 import {users} from "./mock.js";
 import routes from './routes/routes.js'
-import {sendTGMessage} from './telegramBot/telegram.service.js'
+import {sendCommandResponse} from './telegramBot/telegram.service.js'
 
 const CHAT_ID = process.env.CHECK_HEALTH_CHAT_ID;
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +27,7 @@ app.get('/api/test', (_, res) => {
 })
 //
 // app.post('/api/sendMessage', async function (req, res) {
-//     await sendTGMessage({id: CHAT_ID, message: 'hello'})
+//     await sendCommandResponse({id: CHAT_ID, message: 'hello'})
 //
 //     res.send('sent');
 // })
