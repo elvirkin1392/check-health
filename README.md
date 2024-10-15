@@ -4,8 +4,8 @@ Health tracker Web app with a Telegram bot integration
 Purpose:
 Collect data of diseases, medical tests, show statistics
 
-![web - main page](https://github.com/user-attachments/assets/9554f2a0-a78c-43c4-bf95-01c1bc054e3d)
-![mobile - login](https://github.com/user-attachments/assets/4ec68182-51a5-4eb5-b049-e989ac92ad8d)
+<img src="https://github.com/user-attachments/assets/2684d6db-9d10-4bd3-accf-0d105a9cf46e" width="550"/> <img src="https://github.com/user-attachments/assets/4ec68182-51a5-4eb5-b049-e989ac92ad8d" width="140"/>
+
 
 ## Links
 
@@ -14,15 +14,15 @@ Collect data of diseases, medical tests, show statistics
 - https://console.cloud.google.com/
 
 
-##Install
+## Install
 
-###Web
+### Web
 cd client/
 cp .env.template .env # only first time, fill created file with relevant variables
 npm install # only first time or after dependencies updates
 npm run dev
 
-###Server
+### Server
 cp .env.template .env # only first time, fill created file with relevant variables
 npm install # only first time or after dependencies updates
 npm run dev
