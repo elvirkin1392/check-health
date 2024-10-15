@@ -1,5 +1,5 @@
 import getCalendar from "./getCalendar";
-import {Container, Title} from './styled/index'
+import {SContainer, STitle} from './styled/main'
 import styled from "styled-components";
 
 
@@ -10,8 +10,8 @@ const Calendar = () => {
 
   const range = getCalendar();
   return (
-    <Container $height='140px'>
-      <Title>{currentMonth}</Title>
+    <SContainer $height='140px'>
+      <STitle>{currentMonth}</STitle>
 
       <Days>
         {range.map((item, index) =>
@@ -22,7 +22,7 @@ const Calendar = () => {
         )}
       </Days>
 
-    </Container>
+    </SContainer>
   );
 };
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const SContainer = styled.div`
   background-color: #ECEFFD;
   border-radius: 20px;
   box-sizing: border-box;
@@ -12,13 +12,14 @@ export const Container = styled.div`
   overflow: hidden;
   
   padding: 20px;
-  margin: 10px;
+  margin: 0 10px 20px 10px ;
   
   height: ${props => props.$height || "auto"};
+  min-height: ${props => props.$minHeight || "auto"};
   width: ${props => props.$width || "auto"};
 `;
 
-export const Title = styled.span`
+export const STitle = styled.span`
   color: #999999;
   letter-spacing: 2px;
 `

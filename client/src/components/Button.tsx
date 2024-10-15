@@ -2,12 +2,14 @@ import styled from 'styled-components';
 
 export const Button = styled.button`
   border-radius: 20px;
-  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2),
-    -2px -2px #fff;
-  background-color: #f0f1f3;
-  height: 50px;
-  width: 160px;
+  box-shadow: ${props => props.$type === 'active'
+          ?  ''
+          : '1px 1px 1px 1px #847cb840, -2px -2px #fff' };
+  background-color: #ECEFFD;
   color: #6b6b6b;
+  
+  padding: 15px;
+  width: 220px;
   
   &:hover {
     cursor: pointer;
