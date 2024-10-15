@@ -13,6 +13,7 @@ export const waitLoginResponse = (callback: Function, data: object) => {
     if (response.status == 502) {
       pollingCounter--;
       await subscribe();
+
     } else if (response.status != 200) {
       console.log('Error authorization', response.statusText);
 
@@ -29,11 +30,12 @@ export const waitLoginResponse = (callback: Function, data: object) => {
           await subscribe()
         }, 5000)
       }
-      if (message.accessDenied) { //TODO if user doesn't want to login
+      if (message.accessDenied) { //TODO if user doesn't want to login show message
         return false;
       }
       if (message.accessToken) {
         localStorage.setItem('accessToken', message.accessToken);
+        localStorage.setItem('username', message.username);
         axios.interceptors.request.use(config => {
           config.headers.Authorization = message.accessToken ? `Bearer ${message.accessToken}` : '';
           return config;

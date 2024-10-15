@@ -1,4 +1,4 @@
-import {createUser, updateUser, updateUserLoginStatus} from '../routes/auth/auth.service.js'
+import {updateUserLoginStatus} from '../routes/auth/auth.service.js'
 import {users} from "../mock.js";
 import {getCommand} from "./telegram.utils.js";
 import {commandsEnum} from './telegram.enums.js';

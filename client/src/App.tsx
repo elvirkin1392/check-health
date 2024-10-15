@@ -2,7 +2,6 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import PageInfo from './pageInfo/index.tsx'
 import PageAuth from './pageAuth/index.tsx'
 import PageStatistics from './pageStatistics/index.tsx'
-import Header from "./general/header.tsx";
 import {useState} from "react";
 
 const router = createBrowserRouter([
@@ -25,12 +24,10 @@ export default function App() {
 
   return (
     <div>
-      {isAuthorized ? <div>
-        {/*<Header/>*/}
-        <div style={{marginTop: '50px'}}>
-          <RouterProvider router={router}/>
-        </div>
-      </div> : <PageAuth onAuthorize={authorize}/>}
+      {isAuthorized ?
+        <RouterProvider router={router}/>
+        : <PageAuth onAuthorize={authorize}/>}
     </div>
   );
-};
+}
+;

@@ -2,10 +2,11 @@ export const ProfileController = ({profileService}) => {
   return {
     getProfiles: async (req, res) => {
       try {
-        const result = await profileService.getProfiles();
-        res.json({result});
+        const result = await profileService.getProfiles(req.query.username);
+        res.json(result);
       } catch (error) {
-        res.sendStatus(500);
+        console.error(error)
+        res.sendStatus(500, error);
       }
     }
   }
