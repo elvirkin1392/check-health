@@ -1,47 +1,27 @@
-
-export const data = [
-  {
-    start_date: new Date(2022, 9, 14),
-    end_date: new Date(2022, 9, 24)
-  },
-  {
-    start_date: new Date(2024, 5, 17),
-    end_date: new Date(2024, 5, 23)
-  },
-  {
-    start_date: new Date(2024, 2, 17),
-    end_date: new Date(2024, 2, 27)
-  },
-  {
-    start_date: new Date(2023, 9, 14),
-    end_date: new Date(2023, 9, 24)
-  },
-].sort((a, b) => {
-  if (a.start_date > b.start_date) return 1;
-  return -1;
-});
-
-const getDiffDays = (start, end) => {
+const getDiffDays = (start: Date, end:Date): number => {
   const diffTime = Math.abs(start - end)
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays;
 }
 
-export const getSickDaysLastYear = (dataArr) => {
-  if(!dataArr) return 0;
+type DatePeriod = {
+  start_date: Date;
+  end_date: Date;
+};
+
+export const countSummaryFromDayPeriodsLastYear = (periodsArr: Array<DatePeriod>): number => {
+  if (!periodsArr) return 0;
   const startPeriod = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   let countDays = 0;
 
-
-  for (let i = dataArr.length - 1; i >= 0; i--) {
-    const startDate = new Date(dataArr[i].start_date);
-    const endDate = new Date(dataArr[i].end_date);
+  for (let i = periodsArr.length - 1; i >= 0; i--) {
+    const startDate = new Date(periodsArr[i].start_date);
+    const endDate = new Date(periodsArr[i].end_date);
 
     if (startDate > startPeriod) {
 
       countDays = countDays + getDiffDays(startDate, endDate);
-
 
     } else if (endDate > startPeriod) {
 
@@ -54,9 +34,45 @@ export const getSickDaysLastYear = (dataArr) => {
   return countDays
 }
 
-export const getAmountHealthyDays = (dataArr) => {
-  if(dataArr.length === 0) return 0;
+export const countDaysFromLastPeriodTilNow = (periodsArr: Array<DatePeriod>): number => {
+  if (periodsArr.length === 0) return 0;
 
-  const endDate = new Date(dataArr[dataArr.length - 1].end_date);
+  const endDate = new Date(periodsArr[periodsArr.length - 1].end_date);
   return getDiffDays(new Date(), endDate);
+}
+
+function getDaysInMonth(month: number, year: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+export function getCalendar(calendarLength : number): [] {
+  const date = new Date();
+  const datesArr = new Array(calendarLength);
+  const currentMonthLength = getDaysInMonth(date.getMonth(), date.getFullYear());
+  const prevMonthLength = getDaysInMonth(date.getMonth() - 1, date.getFullYear());
+  const middle = calendarLength / 2;
+  const beforeMiddle = middle - 1;
+  const afterMiddle = middle + 1;
+
+  datesArr[middle] = date.getDate();
+
+  //fill array with previous days
+  for (let i = beforeMiddle; i > 0; i--) {
+    if (datesArr[i + 1] > 1) {
+      datesArr[i] = datesArr[i + 1] - 1;
+    } else {
+      datesArr[i] = prevMonthLength;
+    }
+  }
+
+  //fill array with next days
+  for (let i = afterMiddle; i < datesArr.length; i++) {
+    if (datesArr[i - 1] < currentMonthLength) {
+      datesArr[i] = datesArr[i - 1] + 1;
+    } else {
+      datesArr[i] = 1;
+    }
+  }
+
+  return datesArr;
 }

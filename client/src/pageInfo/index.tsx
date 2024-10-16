@@ -12,7 +12,7 @@ type UserData = {
   ill_periods: [];
 };
 
-localStorage.setItem('username', 'ivanova_eva')
+localStorage.setItem('username', 'ivanova_eva') //todo for testing
 const username = localStorage.getItem('username');
 
 const PageInfo = () => {
@@ -25,8 +25,7 @@ const PageInfo = () => {
       setData(result.data);
     }
 
-    fetchProfile()
-      .catch(console.error);
+    fetchProfile().catch(console.error);
 
   }, [])
 

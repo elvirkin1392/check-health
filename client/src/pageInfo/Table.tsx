@@ -1,5 +1,5 @@
+import {infoData} from "./mock"; //TODO replace with data from db
 import {SContainer} from './styled/main'
-import {infoData} from "./mock";
 import {STable, SDescription} from "./styled/Table";
 
 const Table = () => {

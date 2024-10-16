@@ -1,7 +1,8 @@
-import styled from 'styled-components'
 import {useState} from "react";
-import {Button, Input} from '../components';
+import styled from 'styled-components'
+
 import {waitLoginResponse} from "./api";
+import {Button, Input} from '../components';
 
 //TODO replace onatuhorize with state managment
 const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
@@ -12,7 +13,7 @@ const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
   }
 
   return (
-    <Container>
+    <SContainer>
       <div style={{color: '#6b6b6b'}}>check-health</div>
       <div className='prefix'>
         <Input type="text"
@@ -22,11 +23,11 @@ const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
                onChange={(event) => setUsername(event.target.value)}/>
       </div>
       <Button onClick={handleLogin}>Login</Button>
-    </Container>
+    </SContainer>
   );
 };
 
-const Container = styled.div`
+const SContainer = styled.div`
   display: flex;
   margin: 0;
   place-items: center;
@@ -34,7 +35,6 @@ const Container = styled.div`
   min-height: 100vh;
   flex-direction: column;
   justify-content: center;
-
 
   & * {
     margin-bottom: 10px;
@@ -60,6 +60,6 @@ const Container = styled.div`
     margin: 8px;
     z-index: 1;
   }
-`
+`;
 
 export default PageAuth;

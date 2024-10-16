@@ -1,12 +1,19 @@
 import styled from "styled-components";
 import {useState} from "react";
 
-const Switch = () => {
+export const Switch = ({callback}) => {
   const [isOn, onSwitch] = useState(true);
+
+  const handleSwitch = () => {
+    callback();
+    onSwitch(!isOn);
+  }
 
   return (
     <SSwitch>
-      <div className={`button ${isOn ? 'on' : 'off'}`} onClick={() => onSwitch(!isOn)}/>
+      <div
+        className={`button ${isOn ? 'on' : 'off'}`}
+        onClick={handleSwitch}/>
     </SSwitch>
   );
 };
@@ -49,5 +56,3 @@ const SSwitch = styled.div`
     cursor: pointer;
   }
 `;
-
-export default Switch;
