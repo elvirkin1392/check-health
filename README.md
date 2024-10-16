@@ -7,7 +7,7 @@ Collect data of diseases, medical tests, show statistics
 <img src="https://github.com/user-attachments/assets/2684d6db-9d10-4bd3-accf-0d105a9cf46e" width="550"/> <img src="https://github.com/user-attachments/assets/4ec68182-51a5-4eb5-b049-e989ac92ad8d" width="140"/>
 
 ## Demo
-Here is a working live demo : https://check-health-417373288113.europe-north1.run.app/
+Here is a working live demo : [in development]
 
 ## Links
 
