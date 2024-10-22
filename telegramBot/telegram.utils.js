@@ -1,37 +1,17 @@
 import {commandsEnum} from './telegram.enums.js';
 
-export const getCommand = (command) => {
+export const getCommand = (command, value) => {
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
     case commandsEnum.login.commandKey: {
       return {
-        text: 'Do you want to login?',
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: 'yes',
-                callback_data: JSON.stringify({
-                  command: commandsEnum.login.commandKey,
-                  isReadyToLogin: true
-                })
-              },
-              {
-                text: 'no',
-                callback_data: JSON.stringify({
-                  command: commandsEnum.login.commandKey,
-                  isReadyToLogin: false
-                })
-              }]
-          ],
-          one_time_keyboard: true
-        }
+        text: `Code for login to check-health app \n ${value}`
       }
     }
     case commandsEnum.cold_start.commandKey: {
       return {
-        text: 'How long does the flu last? Start from 1(today)',
+        text: 'How long does the flu last?',
         reply_markup: {
           inline_keyboard: [
             [

@@ -1,8 +1,8 @@
 export const ProfileController = ({profileService}) => {
   return {
-    getProfiles: async (req, res) => {
+    getProfile: async (req, res) => {
       try {
-        const result = await profileService.getProfiles(req.query.username);
+        const result = await profileService.getProfile(req.query.username);
         res.json(result);
       } catch (error) {
         console.error(error)

@@ -1,6 +1,6 @@
 export const ProfileDbMocked = () => {
   return {
-    getProfiles: async () => {
+    getProfile: async () => {
       return [{
         "_id": "59b99db4cfa9a34dcd7885b6",
         "name": "Федор Достаевский",

@@ -11,4 +11,4 @@ const profileDb = ProfileDbMocked({db});
 const profileService = ProfileService({profileDb})
 const profileController = ProfileController({profileService});
 
-profileRouterMocked.get("/test/profile", auth.optional, profileController.getProfiles);
+profileRouterMocked.get("/test/profile", auth.optional, profileController.getProfile);

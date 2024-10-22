@@ -1,65 +1,53 @@
 import {useState} from "react";
-import styled from 'styled-components'
 
-import {waitLoginResponse} from "./api";
+import {loginRequest, codeVerification} from "./api";
 import {Button, Input} from '../components';
+import {SContainer} from './styled';
 
 //TODO replace onatuhorize with state managment
 const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
+  const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [username, setUsername] = useState('');
+  const [code, setCode] = useState('');
 
-  const handleLogin = () => {
-    waitLoginResponse(onAuthorize, {username})
+  const handleLogin = async () => {
+    const response = await loginRequest(onAuthorize, {username});
+    setShowCodeVerification(response.isCodeSent);
   }
+  const handleVerify = async () => {
+    const response = await codeVerification({username, code});
+    onAuthorize(response.isCodeVerified);
+  }
+
+  const Verify = <>
+    <div className='wrap'>
+      <label>Code was sent to @{username}</label>
+      <Input type="text"
+             className='input'
+             placeholder='code'
+             value={code}
+             onChange={(event) => setCode(event.target.value)}/>
+    </div>
+    <Button onClick={handleVerify}>Verify</Button>
+  </>;
+
+  const Login = <>
+    <div className='prefix'>
+      <Input type="text"
+             className='input'
+             placeholder='username'
+             value={username}
+             onChange={(event) => setUsername(event.target.value)}/>
+    </div>
+    <Button onClick={handleLogin}>Login</Button>
+  </>;
 
   return (
     <SContainer>
       <div style={{color: '#6b6b6b'}}>check-health</div>
-      <div className='prefix'>
-        <Input type="text"
-               className='input'
-               placeholder='username'
-               value={username}
-               onChange={(event) => setUsername(event.target.value)}/>
-      </div>
-      <Button onClick={handleLogin}>Login</Button>
+      {showCodeVerification ? Verify : Login}
     </SContainer>
   );
 };
-
-const SContainer = styled.div`
-  display: flex;
-  margin: 0;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  flex-direction: column;
-  justify-content: center;
-
-  & * {
-    margin-bottom: 10px;
-  }
-
-  & .prefix {
-    position: relative;
-  }
-
-  & .input {
-    padding-left: 30px;
-  }
-
-  & .prefix:before {
-    content: '@';
-    color: #c3c3c3;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 10px;
-    height: 10px;
-    display: block;
-    margin: 8px;
-    z-index: 1;
-  }
-`;
 
 export default PageAuth;

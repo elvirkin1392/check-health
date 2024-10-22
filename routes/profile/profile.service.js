@@ -1,7 +1,7 @@
 export const ProfileService = ({profileDb}) => {
   return {
-    getProfiles: async (username) => {
-      return await profileDb.getProfiles(username);
+    getProfile: async (username) => {
+      return await profileDb.getProfile(username);
     }
   }
 }

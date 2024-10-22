@@ -10,8 +10,9 @@ tgAxios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 })
 
-export const sendMessage = (chatId, options) => {
-  return tgAxios.post(`/sendMessage`, {chat_id: chatId, ...options}).then(response => response.data);
+export const sendMessage = (id, options) => {
+  console.log('check id', id);
+  return tgAxios.post(`/sendMessage`, {chat_id: id, ...options}).then(response => response.data);
 }
 
 export const setWebhook = () => {
@@ -27,7 +28,7 @@ export const unsetWebhook = () => {
 }
 
 export const getWebhookInfo = () => {
-  return axios.get(`https://api.telegram.org/bot${TG_TOKEN}/getWebhookInfo`)
+  return axios.get(`/getWebhookInfo`)
     .then((response) => {
       console.log('getWebhookInfo', response.data);
       return response.data;

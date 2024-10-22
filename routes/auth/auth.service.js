@@ -1,65 +1,45 @@
-import {users} from '../../mock.js'
 import generateToken from './token.utils.js'
 import HttpException from '../../models/http-exception.model.js'
 import {sendTGLoginMessage} from '../../telegramBot/telegram.service.js'
+import { getUserBio, getUserLoginCode, updateUser} from "./auth.db.js";
 
-const login = async (username) => {
+export const login = async (username) => {
   if (!username) {
     throw new HttpException(422, "username can't be blank");
   }
 
+  const userData = await getUserBio(username);
+
   //TODO if there is no username, and we try to login. Open telegram bot link
 
-  if (users[username]?.authorization.status === 'ready') {
+  try {
+    const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4,0);
+    const result = await sendTGLoginMessage(userData.bio.id, generatedCode);
+    const updatedUser = await updateUser(userData._id, generatedCode);
 
-    const user = users[username];
-    let result = null;
-
-    if (users[username]?.authorization.isAuthenticated) {
-      result = {
-        username: user.username,
-        bio: user.bio,
-        image: user.image,
-        accessToken: generateToken(user.chat_id),
-      }
-      //close login session
-      users[username].authorization = {
-        status: null, //ready, pending, null
-        isAuthenticated: false
-      }
-    }
-    return result;
+    console.log('send message on tg bot', result.data);
+    console.log('updatedUser', updatedUser);
+    return {status: 200, text: 'Code sent to TG'};
+  } catch (error) {
+    console.log('Error login', error.message);
+    return error;
   }
-
-  if (users[username].authorization.status !== 'pending') {
-    try {
-      const result = await sendTGLoginMessage(username);
-      // login session start
-      users[username].authorization = {
-        status: 'pending', //ready, pending, null
-        isAuthenticated: false
-      }
-
-      console.log('Do you want to login?', result.data);
-    } catch (error) {
-      console.log('Error response TG', error);
-    }
-  }
-
-  return {result: 'pending'};
 }
 
-const updateUserLoginStatus = ({userData, isReadyToLogin}) => {
-  users[userData.username] = {
-    ...users[userData.username],
-    ...userData,
-    authorization: {
-      status: 'ready', //close login session
-      isAuthenticated: isReadyToLogin
-    }
-  };
+export const codeVerification = async (username, code) => {
+  const result = await getUserLoginCode(username);
 
-  return users[userData.username];
+  if (result.loginCode === code) {
+    const data = {
+      bio: result.bio,
+      accessToken: generateToken(result.bio.id),
+    }
+
+    //close login session
+    await updateUser(result.bio.id, '');
+    return data;
+  }
+
+  return new Error('Wrong code');
 }
 
-export {login, updateUserLoginStatus}

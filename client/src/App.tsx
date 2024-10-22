@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   },
 ]);
 export default function App() {
-  const [isAuthorized, setAuthorized] = useState(true);
+  const [isAuthorized, setAuthorized] = useState(false);
 
   const authorize = (value: boolean) => {
     setAuthorized(value);

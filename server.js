@@ -2,11 +2,8 @@ import cors from 'cors';
 import path from 'node:path';
 import express from 'express';
 import {fileURLToPath} from 'node:url';
-import {users} from "./mock.js";
-import routes from './routes/routes.js'
-import {sendCommandResponse} from './telegramBot/telegram.service.js'
+import routes from './routes/routes.js';
 
-const CHAT_ID = process.env.CHECK_HEALTH_CHAT_ID;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -17,21 +14,6 @@ app.use(routes);
 
 app.use('/node_modules/axios', express.static(path.join(__dirname, 'node_modules/axios')));
 app.use('/', express.static(path.join(__dirname, 'client/dist'), {extensions: ['html']}));
-
-app.get('/api/test', (_, res) => {
-    users.mrshomesoul.authorization = {
-        status: 'ready', //ready, pending, null
-        isAuthenticated: true
-    };
-    res.send('ok')
-})
-//
-// app.post('/api/sendMessage', async function (req, res) {
-//     await sendCommandResponse({id: CHAT_ID, message: 'hello'})
-//
-//     res.send('sent');
-// })
-
 
 const port = parseInt(process.env.PORT) || 3000;
 app.listen(port, () => {

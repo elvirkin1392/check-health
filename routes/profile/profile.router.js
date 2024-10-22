@@ -11,4 +11,4 @@ const profileDb = ProfileDb({db});
 const profileService = ProfileService({profileDb});
 const profileController = ProfileController({profileService});
 
-profileRouter.get("/profile", auth.optional, profileController.getProfiles);
+profileRouter.get("/profile", auth.optional, profileController.getProfile);
