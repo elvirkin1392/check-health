@@ -22,7 +22,14 @@ export const getUserBio = async (username) => {
   }
 };
 
-export const updateUser = async (userId, code) => {
+export const updateUser = async (userId, value) => {
+  const users = db.collection('users');
+  const result = await users.updateOne({_id: userId}, {$set: value});
+
+  return result;
+}
+
+export const updateUserLoginCode = async (userId, code) => {
   const users = db.collection('users');
   const result = await users.updateOne({_id: userId}, {$set: {loginCode: code}});
 

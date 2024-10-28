@@ -28,7 +28,7 @@ export const unsetWebhook = () => {
 }
 
 export const getWebhookInfo = () => {
-  return axios.get(`/getWebhookInfo`)
+  return tgAxios.get(`/getWebhookInfo`)
     .then((response) => {
       console.log('getWebhookInfo', response.data);
       return response.data;
