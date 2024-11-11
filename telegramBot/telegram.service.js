@@ -1,46 +1,47 @@
-import {getMessageTemplate, responseToCommand} from "./telegram.utils.js";
+import {getMessageTemplate, getResponseToCommand} from "./telegram.utils.js";
 import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
 import {updateDbData} from "../db/general.db.js";
 
 const sendCommandResponse = (user, command) => {
-  const {id: chatId} = user;
   const options = getMessageTemplate(command);
 
-  return sendMessage(chatId, options);
+  return sendMessage(user.id, options);
 }
 
-const addTGUpdates = (payload) => {
+const addTGUpdates = async (payload) => {
   if (!payload || !payload.update_id) {
     return;
   }
-  console.log('payload.update_id', payload.update_id);
 
   //user selected bot_command
-  if (payload.entities && payload.entities.type === 'bot_command') {
-    const response = sendCommandResponse(payload.from, payload.text);
-    return;
+  if (payload.message?.entities && payload.message.entities[0].type === 'bot_command') {
+    //todo message.entities is an array, need to check all of them
+    const response = await sendCommandResponse(payload.message.from, payload.message.text);
+
+    return response;
   }
 
   //response to bot_command
   if (payload.callback_query) {
     const callbackData = JSON.parse(payload.callback_query.data);
+    const nextMove = getResponseToCommand(callbackData.command, callbackData.value);
+    let response;
 
-    const nextMove = responseToCommand(callbackData.command, callbackData.value);
-
-    if (nextMove.closeSession && nextMove.text) {
-      const response = sendMessage(payload.from.chat_id, nextMove.text)
-      return;
-    }
     if (nextMove.updateData) {
-      const response = updateDbData({
-        user: callbackData.from,
+      console.log('update db', payload.callback_query.from);
+       response = await updateDbData({
+        user: payload.callback_query.from,
         command: callbackData.command,
         data: nextMove.updateData
       })
     }
 
-    return;
+    if (nextMove.closeSession) {
+      sendMessage(payload.message.from.id, nextMove.closeSession.text)
+    }
+    console.log('update db return');
+    return response;
   }
 
   //user sent message text

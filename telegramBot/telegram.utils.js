@@ -1,6 +1,8 @@
 import {commandsEnum, messageType} from './telegram.enums.js';
 
 export const getMessageTemplate = (command, value) => {
+  console.log('getMessageTemplate', command, value);
+
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
@@ -16,14 +18,14 @@ export const getMessageTemplate = (command, value) => {
           inline_keyboard: [
             [
               {
-                text: 'today',
+                text: 'first day',
                 callback_data: JSON.stringify({
                   command: commandsEnum.cold_start.commandKey,
                   value: new Date()
                 })
               },
               {
-                text: 'yesterday',
+                text: 'from yesterday',
                 callback_data: JSON.stringify({
                   command: commandsEnum.cold_start.commandKey,
                   value: new Date(new Date().setDate(new Date().getDate() - 1))
@@ -51,7 +53,7 @@ export const getMessageTemplate = (command, value) => {
   }
 }
 
-export const responseToCommand = (commandKey, value) => {
+export const getResponseToCommand = (commandKey, value) => {
   switch (commandKey) {
     case commandsEnum.cold_start.commandKey: {
       if (!value) {
@@ -59,9 +61,8 @@ export const responseToCommand = (commandKey, value) => {
       }
 
       return {
-        closeSession: true,
-        text: 'Calendar has been updated',
-        updateData:  {start_date: value, end_date: new Date()}
+        closeSession: {text: 'Calendar has been updated'},
+        updateData:  {start_date: value, end_date: null}
       };
     }
   }

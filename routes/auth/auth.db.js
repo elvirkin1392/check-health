@@ -12,8 +12,8 @@ export const getUserLoginCode = async (username) => {
 };
 
 export const getUserBio = async (username) => {
-  const users = db.collection('users');
   try {
+    const users = db.collection('users');
     const result = await users.findOne({"bio.username": username}, {projection: {bio: 1}})
     return result;
   } catch (e) {

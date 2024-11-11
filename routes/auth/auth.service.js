@@ -9,7 +9,9 @@ export const login = async (username) => {
   }
 
   const userData = await getUserBio(username);
-
+  if(!userData) {
+    return new HttpException(423, "no user with such a username");
+  }
   //TODO if there is no username, and we try to login. Open telegram bot link
 
   try {
