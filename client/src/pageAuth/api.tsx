@@ -1,13 +1,13 @@
 import {instance as axios} from "../axios";
 
-export const loginRequest = async (callback, data) => {
+export const loginRequest = async ( data: Object) => {
   let response = await axios.post('/api/auth', data);
   let message = response.data;
 
   return {isCodeSent: message.status === 200}
 }
 
-export const codeVerification = async ( data) => {
+export const codeVerification = async ( data: any) => {
   let response = await axios.post('/api/codeVerification', data);
 
   let message = response.data;

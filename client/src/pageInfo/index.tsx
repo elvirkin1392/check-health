@@ -1,11 +1,9 @@
 import {useEffect, useState} from "react";
-import styled from "styled-components";
 
-import HealthyDays from "./HealthyDays";
-import Calendar from "./Calendar";
-import Sidebar from "./Sidebar";
-import Table from "./Table"
 import {instance as axios} from "../axios";
+import {useMediaQuery} from "../hooks/useMediaQuery";
+import PcVersion from "./PcVersion";
+import MobileVersion from "./MobileVersion";
 
 type UserData = {
   bio: {};
@@ -16,34 +14,20 @@ localStorage.setItem('username', 'ivanova_eva') //todo for testing
 const username = localStorage.getItem('username');
 
 const PageInfo = () => {
+  const [isMobile] = useMediaQuery();
   const [data, setData] = useState<UserData>({bio: {}, ill_periods: []});
 
   useEffect(() => {
     const fetchProfile = async () => {
       const result = await axios.get('api/profile', {params: {username}});
-
       setData(result.data);
     }
 
     fetchProfile().catch(console.error);
-
   }, [])
 
-  return (
-    <Container>
-      <div style={{flex: "auto"}}>
-        <Calendar/>
-        <Container>
-          <HealthyDays info={data.ill_periods}/>
-          <Table/>
-        </Container>
-      </div>
-      <Sidebar bio={data.bio}/>
-    </Container>
-  );
+  return isMobile ? <MobileVersion data={data}/> : <PcVersion data={data}/>;
 };
-const Container = styled.div`
-  display: flex;
-  margin-top: 30px;
-`;
+
+
 export default PageInfo;

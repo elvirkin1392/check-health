@@ -1,7 +1,7 @@
 import {useState} from "react";
 
 import {loginRequest, codeVerification} from "./api";
-import {Button, Input} from '../components';
+import {Button, Input} from '../components/main';
 import {SContainer} from './styled';
 
 //TODO replace onatuhorize with state managment
@@ -11,7 +11,7 @@ const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
   const [code, setCode] = useState('');
 
   const handleLogin = async () => {
-    const response = await loginRequest(onAuthorize, {username});
+    const response = await loginRequest({username});
     setShowCodeVerification(response.isCodeSent);
   }
   const handleVerify = async () => {

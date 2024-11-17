@@ -9,6 +9,7 @@
 
 body {
   background: linear-gradient(45deg, #e3e3e3, #e7e6ff);
+  padding-bottom: 20px;
 }
 
 body input, body button {

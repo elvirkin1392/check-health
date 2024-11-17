@@ -1,32 +1,31 @@
-import {SContainer, STitle} from './styled/main'
-import {SAvatar, SName, SUsername} from "./styled/Sidebar";
-import {Button} from "../components/Button";
+import {Title, Username} from './styled/main';
+import {Avatar, Button, Container} from "../components/main";
 
 type Bio = {
-  first_name: '';
-  second_name: '';
-  username: ''
+  first_name: String;
+  second_name: String;
+  username: String
 };
+
 const defaultValue = {
   first_name: '',
   second_name: '',
   username: ''
 };
 
-const Sidebar = ({bio = defaultValue}: { bio: Bio }) => {
+const Sidebar = ({bio = defaultValue}: { bio: Bio}) => {
+
   return (
-    <SContainer $width='400px' $height='calc(100vh - 100px)' $minHeight='500px'>
-      <STitle>check-health</STitle>
+    <Container $width='400px' $height='calc(100vh - 100px)' $minHeight='500px'>
+      <Title>check-health</Title>
 
-      <SAvatar/>
-      <SName>{bio.first_name} {bio.second_name}</SName>
-      <SUsername>@{bio.username}</SUsername>
-
+      <Avatar/>
+      <div>{bio.first_name} {bio.second_name}</div>
+      <Username>@{bio.username}</Username>
       <Button $type='active'>Info</Button>
       <Button>Test results</Button>
-    </SContainer>
+    </Container>
   );
 };
-
 
 export default Sidebar;

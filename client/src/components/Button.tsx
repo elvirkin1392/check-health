@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Button = styled.button`
+export const Button = styled.button<{ $type?: string; }>`
   border-radius: 20px;
   box-shadow: ${props => props.$type === 'active'
           ?  ''
@@ -18,4 +18,4 @@ export const Button = styled.button`
   &:active {
     box-shadow: none;
   }
-`
+`;

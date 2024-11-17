@@ -1,29 +1,38 @@
 import {infoData} from "./mock"; //TODO replace with data from db
-import {SContainer} from './styled/main'
 import {STable, SDescription} from "./styled/Table";
+import {Container} from "../components/main";
 
 const Table = () => {
   return (
-    <SContainer $minHeight='500px' $width='100%'>
+    <Container $minHeight='500px' $width='100%' >
       <STable>
         <tbody>
-        {infoData.map((item, index) =>
-          <tr key={index}>
+        {infoData.map((item, index) => {
+          const descDate = item.lastDate.getDate()
+            + ' '
+            + item.lastDate.toLocaleString('en-US', {month: 'short'})
+            + ' '
+            + item.lastDate.getFullYear();
+
+          return <tr key={index}>
             <td>
-              <SDescription>{item.lastDate}</SDescription>
+              <SDescription>{descDate}</SDescription>
               {item.name}
             </td>
-            <td className={item.normal.from < item.result && item.normal.to > item.result ? 'good' : 'bad'} >
+            <td
+              className={item.normal.from < Number(item.result) && item.normal.to > Number(item.result) ? 'good' : 'bad'}>
               <SDescription/>
               {item.result}
             </td>
-            <td className={item.normal.from < item.result && item.normal.to > item.result ? 'good' : 'bad'} >
+            <td
+              className={item.normal.from < Number(item.result) && item.normal.to > Number(item.result) ? 'good' : 'bad'}>
               <SDescription>prev</SDescription>
               {item.prevResult}</td>
-          </tr>)}
+          </tr>
+        })}
         </tbody>
       </STable>
-    </SContainer>
+    </Container>
   );
 };
 

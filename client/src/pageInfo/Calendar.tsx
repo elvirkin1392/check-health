@@ -1,6 +1,6 @@
 import {getCalendar} from "./utils";
-import {SDays} from "./styled/Calendar";
-import {SContainer, STitle} from './styled/main'
+import {Days, Title} from './styled/main';
+import {Container} from "../components/main";
 
 const currentDate = new Date();
 const currentMonth = currentDate.toLocaleString('default', {month: 'long'}).toLowerCase();
@@ -10,19 +10,19 @@ const Calendar = () => {
   const range = getCalendar(showAmountOfDays);
 
   return (
-    <SContainer $height='140px'>
-      <STitle>{currentMonth}</STitle>
+    <Container $height='140px' >
+      <Title>{currentMonth}</Title>
 
-      <SDays>
+      <Days>
         {range.map((item, index) =>
           <div key={index}>
             <div className={currentDate.getDate() === item ? 'current' : ''}>{item}</div>
             <div className={index < showAmountOfDays/2 ? 'past' : ''}/>
           </div>
         )}
-      </SDays>
+      </Days>
 
-    </SContainer>
+    </Container>
   );
 };
 

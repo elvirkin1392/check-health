@@ -1,5 +1,5 @@
 const getDiffDays = (start: Date, end:Date): number => {
-  const diffTime = Math.abs(start - end)
+  const diffTime = Math.abs(start.getTime() - end.getTime());
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays;
@@ -45,7 +45,7 @@ function getDaysInMonth(month: number, year: number): number {
   return new Date(year, month, 0).getDate();
 }
 
-export function getCalendar(calendarLength : number): [] {
+export function getCalendar(calendarLength : number): any[] {
   const date = new Date();
   const datesArr = new Array(calendarLength);
   const currentMonthLength = getDaysInMonth(date.getMonth(), date.getFullYear());

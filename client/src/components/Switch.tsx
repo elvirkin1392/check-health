@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import {useState} from "react";
 
-export const Switch = ({callback}) => {
+export const Switch = () => {
   const [isOn, onSwitch] = useState(true);
 
   const handleSwitch = () => {
-    callback();
     onSwitch(!isOn);
   }
 
