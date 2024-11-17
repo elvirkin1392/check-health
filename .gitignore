@@ -5,6 +5,8 @@
 .env.production.local
 .env.local
 
+tsconfig.app.tsbuildinfo
+
 node_modules/
 .idea
 /client/dist/
