@@ -2,9 +2,8 @@ import {useState} from "react";
 
 import {loginRequest, codeVerification} from "./api";
 import {Button, Input} from '../components/main';
-import {SContainer} from './styled';
+import {Container} from './styled';
 
-//TODO replace onatuhorize with state managment
 const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
   const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [username, setUsername] = useState('');
@@ -43,10 +42,10 @@ const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
   </>;
 
   return (
-    <SContainer>
+    <Container>
       <div style={{color: '#6b6b6b'}}>check-health</div>
       {showCodeVerification ? Verify : Login}
-    </SContainer>
+    </Container>
   );
 };
 

@@ -19,11 +19,8 @@ export const login = async (username) => {
     const result = await sendTGLoginMessage(userData.bio.id, generatedCode);
     const updatedUser = await updateUserLoginCode(userData._id, generatedCode);
 
-    console.log('send message on tg bot', result.data);
-    console.log('updatedUser', updatedUser);
     return {status: 200, text: 'Code sent to TG'};
   } catch (error) {
-    console.log('Error login', error.message);
     return error;
   }
 }

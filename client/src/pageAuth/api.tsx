@@ -13,11 +13,7 @@ export const codeVerification = async ( data: any) => {
   let message = response.data;
   if (message.accessToken) {
     localStorage.setItem('accessToken', message.accessToken);
-    localStorage.setItem('username', message.username);
-    axios.interceptors.request.use(config => {
-      config.headers.Authorization = message.accessToken ? `Bearer ${message.accessToken}` : '';
-      return config;
-    });
+    localStorage.setItem('username', message.bio.username);
 
     return {isCodeVerified: true};
   }

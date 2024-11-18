@@ -10,20 +10,24 @@ type UserData = {
   ill_periods: [];
 };
 
-localStorage.setItem('username', 'ivanova_eva') //todo for testing
-const username = localStorage.getItem('username');
-
 const PageInfo = () => {
   const [isMobile] = useMediaQuery();
   const [data, setData] = useState<UserData>({bio: {}, ill_periods: []});
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const username = localStorage.getItem('username');
       const result = await axios.get('api/profile', {params: {username}});
       setData(result.data);
     }
 
-    fetchProfile().catch(console.error);
+    fetchProfile().catch(() => {
+      axios.interceptors.request.use(config => {
+        config.headers.Authorization = null;
+        return config;
+      });
+      localStorage.clear();
+    });
   }, [])
 
   return isMobile ? <MobileVersion data={data}/> : <PcVersion data={data}/>;
