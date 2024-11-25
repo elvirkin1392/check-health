@@ -1,14 +1,17 @@
 import {commandsEnum, messageType} from './telegram.enums.js';
 
 export const getMessageTemplate = (command, value) => {
-  console.log('getMessageTemplate', command, value);
-
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
     case commandsEnum.login.commandKey: {
       return {
         text: `Code for login to check-health app \n ${value}`
+      }
+    }
+    case commandsEnum.healthy_days.commandKey: {
+      return {
+        text: "You've been healthy for ${value} days"
       }
     }
     case commandsEnum.cold_start.commandKey: {
@@ -65,5 +68,20 @@ export const getResponseToCommand = (commandKey, value) => {
         updateData:  {start_date: value, end_date: null}
       };
     }
+    case commandsEnum.cold_end.commandKey: {
+      if (!value) {
+        return getMessageTemplate(messageType.calendar.typeKey)
+      }
+
+      return {
+        closeSession: {text: 'Calendar has been updated'},
+        updateData:  {end_date: value}
+      };
+    }
+
+    default: {
+      return {}
+    }
+
   }
 }

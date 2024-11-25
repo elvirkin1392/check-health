@@ -12,7 +12,6 @@ tgAxios.interceptors.response.use(function (response) {
 
 export const sendMessage = (id, options) => {
   return tgAxios.post(`/sendMessage`, {chat_id: id, ...options}).then(response => response.data);
-  return {test: 'test'}
 }
 
 export const setWebhook = () => {

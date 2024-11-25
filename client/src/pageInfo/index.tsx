@@ -32,6 +32,4 @@ const PageInfo = () => {
 
   return isMobile ? <MobileVersion data={data}/> : <PcVersion data={data}/>;
 };
-
-
 export default PageInfo;

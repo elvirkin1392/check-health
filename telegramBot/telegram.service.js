@@ -3,9 +3,8 @@ import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
 import {updateDbData} from "../db/general.db.js";
 
-const sendCommandResponse = (user, command) => {
-  const options = getMessageTemplate(command);
-
+const sendCommandResponse = (user, command, value) => {
+  const options = getMessageTemplate(command, value);
   return sendMessage(user.id, options);
 }
 
@@ -14,33 +13,34 @@ const addTGUpdates = async (payload) => {
     return;
   }
 
-  //user selected bot_command
+  //user select bot_command
   if (payload.message?.entities && payload.message.entities[0].type === 'bot_command') {
     //todo message.entities is an array, need to check all of them
+
+    //todo sendCommandResponse get info from db
     const response = await sendCommandResponse(payload.message.from, payload.message.text);
 
     return response;
   }
 
-  //response to bot_command
+  //user response to bot_command
   if (payload.callback_query) {
-    const callbackData = JSON.parse(payload.callback_query.data);
+    const user = payload.callback_query.from;
+    const callbackData = JSON.parse(payload.callback_query.data); //button data we have sent with command
     const nextMove = getResponseToCommand(callbackData.command, callbackData.value);
     let response;
 
     if (nextMove.updateData) {
-      console.log('update db', payload.callback_query.from);
        response = await updateDbData({
-        user: payload.callback_query.from,
+        user,
         command: callbackData.command,
         data: nextMove.updateData
-      })
+      });
     }
 
     if (nextMove.closeSession) {
-      sendMessage(payload.message.from.id, nextMove.closeSession.text)
+      await sendMessage(user.id, nextMove.closeSession);
     }
-    console.log('update db return');
     return response;
   }
 

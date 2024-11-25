@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 
 import PageStatistics from './pageStatistics/index.tsx'

@@ -56,11 +56,17 @@ interface Message {
   pinned_message: Message
 }
 
-
+interface CallbackQuery {
+  id: String,
+  from: User,
+  message: Message, //optional
+  inline_message_id: String, //optional
+  data: String
+}
 interface Update  {
   update_id: Number,
   message: Message, //optional
   inline_query: {}, //optional
   chosen_inline_result: {}, //optional
-  callback_query: {} //optional
+  callback_query: CallbackQuery //optional
 }

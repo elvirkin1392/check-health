@@ -8,23 +8,25 @@ export const updateDbData = async ({user, command, data}) => {
   const currentUser = await users.findOne({"bio.id": userId})
   const query = getQuery(currentUser, command, data);
 
+  if(!query) return {status: 'ok'};
+
   try {
-    return await users.updateOne({_id: currentUser._id}, query);
+    await users.updateOne({_id: currentUser._id}, query);
+    return {status: 'ok'};
   } catch (e) {
     console.error(e);
     throw(e);
   }
-
 }
 
 export const getQuery = (user, command, data) => {
   switch (command) {
     case commandsEnum.cold_start.commandKey: {
-      return getColdStartQuery(...arguments);
+      return getColdStartQuery(user, command, data);
     }
 
     case commandsEnum.cold_end.commandKey: {
-      return getColdEndQuery(...arguments);
+      return getColdEndQuery(user, command, data);
     }
   }
 }

@@ -8,7 +8,6 @@ export const commandsEnum = {
   healthy_days: { commandKey: "healthy_days", description: "" },
   healthy_year: { commandKey: "healthy_year", description: "" },
   lang: { commandKey: "lang", description: "change language" },
-  test: { commandKey: "test", description: "" },
 };
 
 
