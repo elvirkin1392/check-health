@@ -1,77 +1,90 @@
-import {getMessageTemplate, getResponseToCommand} from "./telegram.utils.js";
+import { DateTime as dt } from "luxon";
+import {getMessageTemplate, getResponseToInlineButton} from "./telegram.utils.js";
 import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData} from "../db/general.db.js";
+import {updateDbData, getDbLastSickDay, getDbIllPeriods} from "../db/general.db.js";
 
-const sendCommandResponse = (user, command, value) => {
+const sendResponseToCommand = async (user, command, payload) => {
+  let value = payload;
+  const commandKey = command.replace('/', '');
+
+  if (commandKey === commandsEnum.healthy_days.commandKey) {
+    const lastSickDay = await getDbLastSickDay(user);
+    value = dt.now().diff(dt.fromISO(lastSickDay), ['days', 'hours']).toObject().days;
+  }
+  if (commandKey === commandsEnum.healthy_year.commandKey) {
+    const periods = await getDbIllPeriods(user);
+    const dayYearAgo = dt.now().minus({ year: 1 });
+    value = 365;
+
+    for (let i=periods.length-1; i >=0; i--) {
+      const start = dt.fromISO(periods[i].start_date);
+      const end = periods[i].end_date ? dt.fromISO(periods[i].end_date) : dt.now();
+      if (start >= dayYearAgo && end >= dayYearAgo) {
+        const diffDays = end.diff(start, ['days', 'hours']).toObject().days + 1;
+        value = value - diffDays;
+      }
+      if (start < dayYearAgo && end >=dayYearAgo) {
+        const diffDays = end.diff(dayYearAgo, ['days', 'hours']).toObject().days + 1;
+        value = value - diffDays;
+      }
+    }
+  }
+
   const options = getMessageTemplate(command, value);
-  return sendMessage(user.id, options);
+  return await sendMessage(user.id, options);
 }
 
-const addTGUpdates = async (payload) => {
-  if (!payload || !payload.update_id) {
-    return;
-  }
-
-  //user select bot_command
-  if (payload.message?.entities && payload.message.entities[0].type === 'bot_command') {
-    //todo message.entities is an array, need to check all of them
-
-    //todo sendCommandResponse get info from db
-    const response = await sendCommandResponse(payload.message.from, payload.message.text);
-
-    return response;
-  }
-
-  //user response to bot_command
-  if (payload.callback_query) {
-    const user = payload.callback_query.from;
-    const callbackData = JSON.parse(payload.callback_query.data); //button data we have sent with command
-    const nextMove = getResponseToCommand(callbackData.command, callbackData.value);
-    let response;
-
-    if (nextMove.updateData) {
-       response = await updateDbData({
-        user,
-        command: callbackData.command,
-        data: nextMove.updateData
-      });
+const restructureUpdates = (data) => {
+  if (data.message?.entities && data.message.entities[0].type === 'bot_command') {
+    return {
+      messageType: 'bot_command',
+      user: data.message.from,
+      message: data.message.text
     }
-
-    if (nextMove.closeSession) {
-      await sendMessage(user.id, nextMove.closeSession);
+  }
+  if (data.callback_query) {
+    return {
+      messageType: 'inline_button',
+      user: data.callback_query.from,
+      message: JSON.parse(data.callback_query.data)
     }
-    return response;
   }
-
-  //user sent message text
-  if (payload.message) {
-    //TODO response to only commands
-    console.log('payload.message', payload.message);
-
-    // const user = updateUser({
-    //   userData: payload.message.from,
-    //   message: payload.message.text
-    // });
-
-    return;
-  }
-
-  //user edited/updated prev message
-  if (payload.edited_message) {
-    console.log('payload.edited_message', payload.edited_message);
-    return;
+  if (data.message) {
+    return {
+      messageType: 'message',
+      user: data.from,
+      message: data.message.text
+    }
   }
 }
 
-const sendTGLoginMessage = (userId, generatedCode) => {
-  const options = getMessageTemplate(commandsEnum.login.commandKey, generatedCode)
+const addTGUpdates = async (updates) => {
+  const {messageType, user, message} = restructureUpdates(updates);
+  switch (messageType) {
+    case 'bot_command': {
+      await sendResponseToCommand(user, message);
+      return;
+    }
+    case 'inline_button': {
+      const nextMove = getResponseToInlineButton(message.command, message.value);
+      if (nextMove.updateData) {
+        await updateDbData({
+          user,
+          command: message.command,
+          data: nextMove.updateData
+        });
+      }
 
-  return sendMessage(userId, options)
+      if (nextMove.closeSession) {
+        await sendMessage(user.id, nextMove.closeSession);
+      }
+      return;
+    }
+  }
 }
 
 export {
   addTGUpdates,
-  sendTGLoginMessage,
-  sendCommandResponse
+  sendResponseToCommand
 }

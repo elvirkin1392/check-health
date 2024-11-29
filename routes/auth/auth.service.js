@@ -1,7 +1,8 @@
 import generateToken from './token.utils.js'
 import HttpException from '../../models/http-exception.model.js'
-import {sendTGLoginMessage} from '../../telegramBot/telegram.service.js'
+import {sendResponseToCommand} from '../../telegramBot/telegram.service.js'
 import {getUserBio, getUserLoginCode, updateUserLoginCode} from "./auth.db.js";
+import {commandsEnum} from "../../telegramBot/telegram.enums.js";
 
 export const login = async (username) => {
   if (!username) {
@@ -16,8 +17,8 @@ export const login = async (username) => {
 
   try {
     const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4,0);
-    const result = await sendTGLoginMessage(userData.bio.id, generatedCode);
-    const updatedUser = await updateUserLoginCode(userData._id, generatedCode);
+    await sendResponseToCommand(userData.bio, commandsEnum.login.commandKey, generatedCode);
+    await updateUserLoginCode(userData._id, generatedCode);
 
     return {status: 200, text: 'Code sent to TG'};
   } catch (error) {
