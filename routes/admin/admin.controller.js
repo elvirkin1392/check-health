@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import auth from '../auth/auth.js';
-import {addTGUpdates} from '../../telegramBot/telegram.service.js'
+import {addTGUpdates} from '../../telegramBot/telegram.service.tsx';
 import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.js";
 
 const router = Router();

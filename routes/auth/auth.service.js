@@ -1,6 +1,6 @@
 import generateToken from './token.utils.js'
 import HttpException from '../../models/http-exception.model.js'
-import {sendResponseToCommand} from '../../telegramBot/telegram.service.js'
+import {sendResponseToCommand} from '../../telegramBot/telegram.service.tsx';
 import {getUserBio, getUserLoginCode, updateUserLoginCode} from "./auth.db.js";
 import {commandsEnum} from "../../telegramBot/telegram.enums.js";
 

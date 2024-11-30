@@ -1,7 +1,7 @@
-import {commandsEnum, messageType} from './telegram.enums.js';
 import {DateTime as dt} from "luxon";
+import {commandsEnum, messageType} from '../telegram.enums.js';
 
-export const getMessageTemplate = (command, value) => {
+export const getMessageTemplate = (command: string, value?: string) => {
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
@@ -93,41 +93,8 @@ export const getMessageTemplate = (command, value) => {
         text: 'Choose date'
       }
     }
-  }
-}
-
-export const getResponseToInlineButton = (commandKey, value) => {
-  switch (commandKey) {
-    case commandsEnum.cold_start.commandKey: {
-      if (!value) {
-        return getMessageTemplate(messageType.calendar.typeKey)
-      }
-      if (dt.fromISO(value) > dt.now()) {
-        throw new Error("date can't be older than today");
-      }
-
-      return {
-        closeSession: {text: 'Calendar has been updated'},
-        updateData:  {start_date: value, end_date: null}
-      };
-    }
-    case commandsEnum.cold_end.commandKey: {
-      if (!value) {
-        return getMessageTemplate(messageType.calendar.typeKey)
-      }
-      if (dt.fromISO(value) > dt.now()) {
-        throw new Error("date can't be older than today");
-      }
-
-      return {
-        closeSession: {text: 'Calendar has been updated'},
-        updateData:  {end_date: value}
-      };
-    }
-
     default: {
       return {}
     }
-
   }
 }
