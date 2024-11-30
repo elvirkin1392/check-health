@@ -2,7 +2,7 @@ import {DateTime as dt} from "luxon";
 
 import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastSickDay, getDbIllPeriods} from "../db/general.db.js";
+import {updateDbData, getDbLastSickDay, getDbIllPeriods, getDbLastSickPeriod} from "../db/general.db.js";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,
@@ -49,6 +49,10 @@ const sendResponseToCommand = async (user: User, command: string, payload?: any)
   if (commandKey === commandsEnum.healthy_year.commandKey) {
     const periods = await getDbIllPeriods(user);
     value = extractPeriodsFromYear(periods);
+  }
+  if (commandKey === commandsEnum.cold_end.commandKey) {
+    const lastPeriod = await getDbLastSickPeriod(user);
+    // value = get(lastPeriod);
   }
 
   const options = getMessageTemplate(command, value);

@@ -18,6 +18,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): a
       };
     }
     case commandsEnum.cold_end.commandKey: {
+      //TODO validation, if start_date is today, then end_date can't be earlier
       if (!value) {
         return getMessageTemplate(messageType.calendar.typeKey)
       }

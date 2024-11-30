@@ -21,6 +21,7 @@ export const getMessageTemplate = (command: string, value?: string) => {
       }
     }
     case commandsEnum.cold_start.commandKey: {
+      //TODO  change to calendar only
       return {
         text: 'How long does the flu last?',
         reply_markup: {
@@ -40,13 +41,13 @@ export const getMessageTemplate = (command: string, value?: string) => {
                   value: dt.now().minus({ day: 1 })
                 })
               },
-              {
-                text: 'another date',
-                callback_data: JSON.stringify({
-                  command: commandsEnum.cold_start.commandKey,
-                  value: null
-                })
-              }
+              // {
+              //   text: 'another date',
+              //   callback_data: JSON.stringify({
+              //     command: commandsEnum.cold_start.commandKey,
+              //     value: null
+              //   })
+              // }
 
             ]
           ],
@@ -67,20 +68,20 @@ export const getMessageTemplate = (command: string, value?: string) => {
                   value: dt.now()
                 })
               },
-              {
-                text: 'yesterday',
-                callback_data: JSON.stringify({
-                  command: commandsEnum.cold_end.commandKey,
-                  value: dt.now().minus({ day: 1 })
-                })
-              },
-              {
-                text: 'another date',
-                callback_data: JSON.stringify({
-                  command: commandsEnum.cold_end.commandKey,
-                  value: null
-                })
-              }
+              // {
+              //   text: 'yesterday',
+              //   callback_data: JSON.stringify({
+              //     command: commandsEnum.cold_end.commandKey,
+              //     value: dt.now().minus({ day: 1 })
+              //   })
+              // },
+              // {
+              //   text: 'another date',
+              //   callback_data: JSON.stringify({
+              //     command: commandsEnum.cold_end.commandKey,
+              //     value: null
+              //   })
+              // }
 
             ]
           ],

@@ -25,6 +25,17 @@ export const getDbLastSickDay = async (user) => {
   }
 }
 
+export const getDbLastSickPeriod = async (user) => {
+  const {id: userId} = user;
+  const users = db.collection('users');
+  try {
+    const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
+    return periods[periods.length - 1];
+  } catch (e) {
+    throw e;
+  }
+}
+
 export const getDbIllPeriods = async (user) => {
   const {id: userId} = user;
   const users = db.collection('users');
