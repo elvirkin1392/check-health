@@ -1,0 +1,19 @@
+:root {
+  font-family: monospace, Arial, sans-serif;
+  letter-spacing: 2px;
+  line-height: 1.5;
+  font-weight: 400;
+  background: linear-gradient(45deg, #e3e3e3, #e7e6ff);
+  height: 100vh;
+}
+
+body {
+  background: linear-gradient(45deg, #e3e3e3, #e7e6ff);
+  padding-bottom: 20px;
+}
+
+body input, body button {
+  box-sizing: border-box;
+  border: none;
+  font-family: monospace, Arial, sans-serif;
+}
