@@ -29,9 +29,9 @@ export const updateUser = async (userId, value) => {
   return result;
 }
 
-export const updateUserLoginCode = async (userId, code) => {
+export const updateUserLoginCode = async (id, code) => {
   const users = db.collection('users');
-  const result = await users.updateOne({_id: userId}, {$set: {loginCode: code}});
+  const result = await users.updateOne({_id: id}, {$set: {loginCode: code}});
 
   return result;
 }

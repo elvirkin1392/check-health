@@ -32,11 +32,11 @@ export const codeVerification = async (username, code) => {
   if (result.loginCode === code) {
     const data = {
       bio: result.bio,
-      accessToken: generateToken(result.bio.id),
+      accessToken: generateToken(result._id),
     }
 
     //close login session
-    await updateUserLoginCode(result.bio.id, '');
+    await updateUserLoginCode(result._id, '');
     return data;
   }
 
