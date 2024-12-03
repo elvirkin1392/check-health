@@ -1,0 +1,44 @@
+{
+  "name": "check-health",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx tsx server.tsx",
+    "deploy": "gcloud run deploy check-health --source . --region europe-north1",
+    "dev": "npx tsx watch --env-file=.env server.tsx",
+    "cloud-sql-proxy": "./cloud-sql-proxy check-health-437712:us-central1:check-health &",
+    "download-cloud-sql-proxy": "curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.13.0/cloud-sql-proxy.darwin.amd64",
+    "logs-tail": "gcloud run services logs read check-health --limit=10 --project check-health-437712 --region europe-north1",
+    "logs": "gcloud beta run services logs tail check-health --project check-health-437712 --region europe-north1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google-cloud/cloud-sql-connector": "^1.4.0",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "cron": "^3.2.1",
+    "express": "^4.21.0",
+    "express-jwt": "^8.4.1",
+    "express-ws": "^5.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "luxon": "^3.5.0",
+    "mongodb": "^6.9.0",
+    "pg": "^8.13.0",
+    "tslib": "^2.8.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/cron": "^2.0.1",
+    "@types/express": "^5.0.0",
+    "@types/luxon": "^3.4.2",
+    "nodemon": "^3.1.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
