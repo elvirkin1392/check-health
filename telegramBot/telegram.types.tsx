@@ -119,7 +119,7 @@ export type CallbackQuery = {
   from: User,
   message?: Message | InaccessibleMessage,
   inline_message_id?: string,
-  chat_instance: string,
+  chat_instance?: string,
   data?: string,
   game_short_name?: string
 }

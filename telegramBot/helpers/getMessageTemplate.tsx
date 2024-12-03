@@ -38,7 +38,7 @@ export const getMessageTemplate = (command: string, value?: string) => {
                 text: 'from yesterday',
                 callback_data: JSON.stringify({
                   command: commandsEnum.cold_start.commandKey,
-                  value: dt.now().minus({ day: 1 })
+                  value: dt.now().minus({day: 1})
                 })
               },
               // {
@@ -94,8 +94,33 @@ export const getMessageTemplate = (command: string, value?: string) => {
         text: 'Choose date'
       }
     }
+    case messageType.check_health.typeKey: {
+      return {
+        text: 'How do you feel today?',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "good",
+                callback_data: JSON.stringify({
+                  query: messageType.check_health.typeKey,
+                  value: true
+                })
+              },
+              {
+                text: 'still bad',
+                callback_data: JSON.stringify({
+                  query: messageType.check_health.typeKey,
+                  value: false
+                })
+              },
+            ]
+          ],
+          one_time_keyboard: true
+        }
+      }}
     default: {
-      return {}
+        return {}
+      }
     }
   }
-}

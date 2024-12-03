@@ -14,5 +14,8 @@ export const commandsEnum = {
 export const messageType = {
   calendar: {
     typeKey: 'calendar'
+  },
+  check_health: {
+    typeKey: 'check_health'
   }
 }

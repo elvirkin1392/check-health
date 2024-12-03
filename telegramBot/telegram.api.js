@@ -6,7 +6,7 @@ const tgAxios = axios.create({baseURL: `https://api.telegram.org/bot${TG_TOKEN}`
 tgAxios.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  console.error(error);
+  console.error(error.message);
   return Promise.reject(error);
 })
 

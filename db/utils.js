@@ -26,9 +26,9 @@ export const getColdStartQuery = (user, command, data) => {
 
     if (diffDays > 1) {
       const closePrevPeriod = lastPeriod.start_date;
-      const query = getColdEndQuery(user, commandsEnum.cold_end.commandKey, closePrevPeriod);
+      const query = getColdEndQuery(user, commandsEnum.cold_end.commandKey, {end_date: closePrevPeriod});
 
-      return {$push: {ill_periods: data}, query}
+      return [{$push: {ill_periods: data}}, query]
     }
     return;
   }

@@ -1,6 +1,6 @@
+import {DateTime as dt} from "luxon";
 import {db} from "./dbClient.js";
 import {getQuery} from "./utils.js";
-import {DateTime as dt} from "luxon";
 
 export const updateDbData = async ({user, command, data}) => {
   const users = db.collection('users');
@@ -8,7 +8,19 @@ export const updateDbData = async ({user, command, data}) => {
   const query = getQuery(currentUser, command, data);
 
   try {
-  query && await users.updateOne({_id: currentUser._id}, query);
+    if (query && Array.isArray(query)) {
+      const bulk = query.map(q => {
+        return {
+          updateOne: {
+            filter: {_id: currentUser._id},
+            update: q
+          }
+        }
+      })
+      await users.bulkWrite(bulk);
+    } else if (query) {
+      await users.updateOne({_id: currentUser._id}, query);
+    }
   } catch (e) {
     throw e;
   }
@@ -24,7 +36,15 @@ export const getDbLastSickDay = async (user) => {
     throw e;
   }
 }
-
+export const getDbUser = async (user) => {
+  const {id: userId} = user;
+  const users = db.collection('users');
+  try {
+    return await users.findOne({"bio.id": userId});
+  } catch (e) {
+    throw e;
+  }
+}
 export const getDbLastSickPeriod = async (user) => {
   const {id: userId} = user;
   const users = db.collection('users');

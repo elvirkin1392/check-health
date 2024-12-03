@@ -21,6 +21,7 @@
     "@google-cloud/cloud-sql-connector": "^1.4.0",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
+    "cron": "^3.2.1",
     "express": "^4.21.0",
     "express-jwt": "^8.4.1",
     "express-ws": "^5.0.2",
@@ -33,6 +34,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/cron": "^2.0.1",
     "@types/express": "^5.0.0",
     "@types/luxon": "^3.4.2",
     "nodemon": "^3.1.7",
