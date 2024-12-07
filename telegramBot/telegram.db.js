@@ -1,6 +1,6 @@
 import {DateTime as dt} from "luxon";
 import {db} from "./dbClient.js";
-import {getQuery} from "./utils.js";
+import {getQuery} from "./dbQueries.js";
 
 export const updateDbData = async ({user, command, data}) => {
   const users = db.collection('users');

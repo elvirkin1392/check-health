@@ -1,5 +1,5 @@
 import {DateTime as dt} from "luxon";
-import {commandsEnum} from "../telegramBot/telegram.enums.js";
+import {commandsEnum} from "../telegram.enums.js";
 
 export const getQuery = (user, command, data) => {
   switch (command) {

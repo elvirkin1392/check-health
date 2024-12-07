@@ -2,7 +2,7 @@ import {DateTime as dt} from "luxon";
 
 import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastSickDay, getDbIllPeriods, getDbLastSickPeriod} from "../db/general.db.js";
+import {updateDbData, getDbLastSickDay, getDbIllPeriods, getDbLastSickPeriod} from "./telegram.db.js";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,
