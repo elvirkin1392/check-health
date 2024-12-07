@@ -1,8 +1,8 @@
-import generateToken from './token.utils.js'
-import HttpException from '../../models/http-exception.model.js'
+import generateToken from './token.utils.js';
+import HttpException from '../../models/http-exception.model.js';
+import {commandsEnum} from "../../telegramBot/telegram.enums.js";
 import {sendResponseToCommand} from '../../telegramBot/telegram.service.tsx';
 import {getUserBio, getUserLoginCode, updateUserLoginCode} from "./auth.db.js";
-import {commandsEnum} from "../../telegramBot/telegram.enums.js";
 
 export const login = async (username) => {
   if (!username) {
@@ -10,13 +10,12 @@ export const login = async (username) => {
   }
 
   const userData = await getUserBio(username);
-  if(!userData) {
-    return new HttpException(423, "no user with such a username");
+  if (!userData) {
+    return {url: 'https://telegram.me/c_health_bot'}
   }
-  //TODO if there is no username, and we try to login. Open telegram bot link
 
   try {
-    const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4,0);
+    const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4, 0);
     await sendResponseToCommand(userData.bio, commandsEnum.login.commandKey, generatedCode);
     await updateUserLoginCode(userData._id, generatedCode);
 

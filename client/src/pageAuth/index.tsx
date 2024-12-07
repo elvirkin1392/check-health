@@ -11,6 +11,9 @@ const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
 
   const handleLogin = async () => {
     const response = await loginRequest({username});
+    if (response.url) {
+      window.open(response.url)
+    }
     setShowCodeVerification(response.isCodeSent);
   }
   const handleVerify = async () => {

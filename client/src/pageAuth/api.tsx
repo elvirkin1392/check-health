@@ -4,7 +4,7 @@ export const loginRequest = async ( data: Object) => {
   let response = await axios.post('/api/auth', data);
   let message = response.data;
 
-  return {isCodeSent: message.status === 200}
+  return {isCodeSent: message.status === 200, url: message.url}
 }
 
 export const codeVerification = async ( data: any) => {
