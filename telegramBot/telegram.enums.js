@@ -1,4 +1,5 @@
 export const commandsEnum = {
+  start: {commandKey: 'start', description: 'register new user'},
   login: {
     commandKey: "login",
     description: "send request to telegram for authorization",

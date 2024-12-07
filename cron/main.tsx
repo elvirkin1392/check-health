@@ -54,7 +54,7 @@ export const stopJob = async ({userId, type}) => {
   await tgJobs.deleteOne({"userId": userId, "type": type});
 }
 
-export type Job = {
+type Job = {
   cronTime: string | Date | dt,
   onTick: () => void | Promise<void>,
   onComplete?: () => void | Promise<void>,

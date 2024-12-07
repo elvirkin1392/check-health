@@ -23,7 +23,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
         closeSession: {text: 'Calendar has been updated'},
         updateData: {start_date: value, end_date: null},
         jobConfig: {
-          cronTime: '10 * * * * *',
+          cronTime: '10 * * * * *', //for testing every 10 sec todo change to every day
           messageTemplate: getMessageTemplate(messageType.check_health.typeKey),
           type: messageType.check_health.typeKey
         }

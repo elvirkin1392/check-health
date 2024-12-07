@@ -1,10 +1,21 @@
 import {DateTime as dt} from "luxon";
 import {commandsEnum, messageType} from '../telegram.enums.js';
+import {CreateStatus} from "../enums/Statuses.tsx";
 
 export const getMessageTemplate = (command: string, value?: string) => {
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
+    case commandsEnum.start.commandKey: {
+      if (value === CreateStatus.Failed) {
+        return {
+          text: "Sorry but I couldn't create your profile. \nType 'bug_rescue' to get help from the beloved developer"
+        }
+      }
+     return {
+       text: `Nice to meet you!\nI'm here to help you make some statistic about your health`
+     }
+    }
     case commandsEnum.login.commandKey: {
       return {
         text: `Code for login to check-health app \n ${value}`

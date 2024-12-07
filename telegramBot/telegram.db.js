@@ -1,6 +1,27 @@
 import {DateTime as dt} from "luxon";
-import {db} from "./dbClient.js";
-import {getQuery} from "./dbQueries.js";
+import {db} from "../db/dbClient.js";
+import {getQuery} from "./helpers/dbQueries.tsx";
+import {UserTemplate} from "../db/templates/UserTemplate.tsx";
+import {CreateStatus} from "./enums/Statuses.tsx";
+
+export const createDbUser = async (userTg) => {
+  const users = db.collection('users');
+  const currentUser = await users.findOne({"bio.username": userTg.username});
+  try {
+    if (!currentUser) {
+      const newUser = {
+        ...UserTemplate,
+        bio: userTg
+      };
+      await users.insertOne(newUser);
+      return CreateStatus.Created;
+    }
+    return CreateStatus.Unchanged;
+  } catch (e) {
+    console.log("User wasn't created", e.message);
+    return CreateStatus.Failed;
+  }
+}
 
 export const updateDbData = async ({user, command, data}) => {
   const users = db.collection('users');
