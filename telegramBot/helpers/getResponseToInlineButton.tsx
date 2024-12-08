@@ -1,6 +1,7 @@
 import {DateTime as dt} from "luxon";
-import {commandsEnum, messageType} from '../telegram.enums.js';
 import {getMessageTemplate} from "./getMessageTemplate";
+import {Command} from "../enums/Command";
+import {MessageType} from "../enums/MessageType";
 
 type Response = {
   closeSession?: { text: string },
@@ -10,9 +11,9 @@ type Response = {
 
 export const getResponseToInlineButton = (commandKey: string, value?: string): Response => {
   switch (commandKey) {
-    case commandsEnum.cold_start.commandKey: {
+    case Command.ColdStart: {
       if (!value) {
-        return getMessageTemplate(messageType.calendar.typeKey)
+        return getMessageTemplate(MessageType.Calendar)
       }
       //todo move validation
       // if (dt.fromISO(value) > dt.now()) {
@@ -24,12 +25,12 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
         updateData: {start_date: value, end_date: null},
         jobConfig: {
           cronTime: '10 * * * * *', //for testing every 10 sec todo change to every day
-          messageTemplate: getMessageTemplate(messageType.check_health.typeKey),
-          type: messageType.check_health.typeKey
+          messageTemplate: getMessageTemplate(MessageType.CheckHealth),
+          type: MessageType.CheckHealth
         }
       }
     }
-    case commandsEnum.cold_end.commandKey: {
+    case Command.ColdEnd: {
       //todo move validation
       // if (dt.fromISO(value) > dt.now()) {
       //   throw new Error("date can't be older than today");
@@ -37,13 +38,13 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
       //TODO validation, if start_date is today, then end_date can't be earlier
 
       if (!value) {
-        return getMessageTemplate(messageType.calendar.typeKey)
+        return getMessageTemplate(MessageType.Calendar)
       }
 
       return {
         closeSession: {text: 'Calendar has been updated'},
         updateData: {end_date: value},
-        jobConfig: {shouldStop: true, type: messageType.check_health.typeKey}
+        jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
       };
     }
 

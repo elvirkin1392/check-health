@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import auth from '../auth/auth.js';
-import {addTGUpdates} from '../../telegramBot/telegram.service.tsx';
+import {manageTgUpdates} from '../../telegramBot/telegram.service.tsx';
 import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.js";
 
 const router = Router();
@@ -27,7 +27,7 @@ router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
 router.post('/listenWebHook', auth.optional, async function (req, res) {
   const body = req.body;
   try {
-    await addTGUpdates(body);
+    await manageTgUpdates(body);
     return res.sendStatus(200);
   } catch (error) {
     return res.status(500).json({message: error?.message});

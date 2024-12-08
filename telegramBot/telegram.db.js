@@ -7,6 +7,7 @@ import {CreateStatus} from "./enums/Statuses.tsx";
 export const createDbUser = async (userTg) => {
   const users = db.collection('users');
   const currentUser = await users.findOne({"bio.username": userTg.username});
+
   try {
     if (!currentUser) {
       const newUser = {

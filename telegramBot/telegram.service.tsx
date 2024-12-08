@@ -1,6 +1,5 @@
 import {DateTime as dt} from "luxon";
 
-import {commandsEnum} from './telegram.enums.js';
 import {sendMessage} from "./telegram.api.js";
 import {updateDbData, getDbLastSickDay, getDbIllPeriods, getDbLastSickPeriod, createDbUser} from "./telegram.db.js";
 import {
@@ -12,8 +11,9 @@ import {
 } from "./helpers/main";
 import {Update, User} from "./telegram.types.js";
 import {toggleJob} from "../cron/main.tsx";
+import {Command} from "./enums/Command";
 
-const addTGUpdates = async (update: Update) => {
+const manageTgUpdates = async (update: Update) => {
   const {messageType, userTg, message} = restructureUpdatesData(update);
 
   switch (messageType) {
@@ -46,23 +46,24 @@ const addTGUpdates = async (update: Update) => {
 const sendResponseToCommand = async (userTg: User, command: string, payload?: any) => {
   let value = payload;
   const commandKey = command.replace('/', '');
+
   switch (commandKey) {
-    case commandsEnum.start.commandKey: {
+    case Command.Start: {
       const status = await createDbUser(userTg);
       value = status;
       break;
     }
-    case commandsEnum.healthy_days.commandKey: {
+    case Command.HealthyDays: {
       const lastSickDay = await getDbLastSickDay(userTg);
       value = calcPeriodBetweenDates(lastSickDay, dt.now()).days;
       break;
     }
-    case commandsEnum.healthy_year.commandKey: {
+    case Command.HealthyYear: {
       const periods = await getDbIllPeriods(userTg);
       value = extractPeriodsFromYear(periods);
       break;
     }
-    case commandsEnum.cold_end.commandKey: {
+    case Command.ColdEnd: {
       const lastPeriod = await getDbLastSickPeriod(userTg);
       // value = get(lastPeriod); todo return last start date to calc available dates
       break;
@@ -70,10 +71,12 @@ const sendResponseToCommand = async (userTg: User, command: string, payload?: an
   }
 
   const options = getMessageTemplate(command, value);
-  return await sendMessage(userTg.id, options);
+  if (options) {
+    await sendMessage(userTg.id, options);
+  }
 }
 
 export {
-  addTGUpdates,
+  manageTgUpdates,
   sendResponseToCommand
 }
