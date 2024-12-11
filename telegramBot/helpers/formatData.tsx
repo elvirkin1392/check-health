@@ -7,13 +7,16 @@ export const extractPeriodsFromYear = (periods) => {
   for (let i = periods.length - 1; i >= 0; i--) {
     const start = dt.fromISO(periods[i].start_date);
     const end = periods[i].end_date ? dt.fromISO(periods[i].end_date) : dt.now();
+
     if (start >= dayYearAgo && end >= dayYearAgo) {
-      const diffDays = calcPeriodBetweenDates(start, end).days + 1;
+      const diffDays = calcPeriodBetweenDates(start, end).days || 1;
       result = result - diffDays;
     }
+
     if (start < dayYearAgo && end >= dayYearAgo) {
-      const diffDays = calcPeriodBetweenDates(dayYearAgo, end).days + 1;
+      const diffDays = calcPeriodBetweenDates(dayYearAgo, end).days || 1;
       result = result - diffDays;
+      return result;
     }
   }
 
@@ -21,5 +24,7 @@ export const extractPeriodsFromYear = (periods) => {
 }
 
 export const calcPeriodBetweenDates = (start, end) => {
-  return dt.fromISO(end).diff(dt.fromISO(start), ['days', 'hours']).toObject();
+  const startDt = dt.fromISO(start).toISODate();
+  const endDt = dt.fromISO(end).toISODate();
+  return dt.fromISO(endDt).diff(dt.fromISO(startDt), ['days']).toObject();
 }
