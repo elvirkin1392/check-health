@@ -47,7 +47,15 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
         jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
       };
     }
-
+    case MessageType.CheckHealth: {
+      if(value) {
+        return {
+          closeSession: {text: 'Ill period was closed. Hooray!'},
+          updateData: {end_date: value},
+          jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
+        };
+      }
+    }
     default: {
       return {}
     }

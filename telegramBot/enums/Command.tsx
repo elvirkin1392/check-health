@@ -1,7 +1,6 @@
-export const enum Command {
+export enum Command {
   Start = "start",
-  Login = "login",
-  ColdStart = "cold-start",
+  ColdStart = "cold_start",
   ColdEnd = "cold_end",
   HealthyDays = "healthy_days",
   HealthyYear = "healthy_year",
