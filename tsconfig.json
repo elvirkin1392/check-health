@@ -3,6 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "importHelpers": true,
@@ -18,7 +19,7 @@
     "noImplicitThis": false,
     "strictNullChecks": false,
     "outDir": "./build",
-    "baseUrl": ".",
+    "baseUrl": "."
   },
 //  "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["node_modules", "build", "client"]
