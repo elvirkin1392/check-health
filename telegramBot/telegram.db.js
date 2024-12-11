@@ -47,13 +47,13 @@ export const updateDbData = async ({user, command, data}) => {
     throw e;
   }
 }
-export const getDbLastSickDay = async (user) => {
+export const getDbLastIllDay = async (user) => {
   const {id: userId} = user;
   const users = db.collection('users');
   try {
     const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
-    const lastSickDay = periods[periods.length - 1].end_date || dt.now();
-    return lastSickDay;
+    const lastIllDay = periods[periods.length - 1].end_date || dt.now();
+    return lastIllDay;
   } catch (e) {
     throw e;
   }
@@ -67,7 +67,7 @@ export const getDbUser = async (user) => {
     throw e;
   }
 }
-export const getDbLastSickPeriod = async (user) => {
+export const getDbLastIllPeriod = async (user) => {
   const {id: userId} = user;
   const users = db.collection('users');
   try {

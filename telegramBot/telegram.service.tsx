@@ -1,7 +1,7 @@
 import {DateTime as dt} from "luxon";
 
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastSickDay, getDbIllPeriods, getDbLastSickPeriod, createDbUser} from "./telegram.db.js";
+import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, createDbUser} from "./telegram.db.js";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,
@@ -43,34 +43,34 @@ const manageTgUpdates = async (update: Update) => {
   }
 }
 
-const sendResponseToCommand = async (userTg: User, command: string, payload?: any) => {
-  let value = payload;
+const sendResponseToCommand = async (userTg: User, command: string, value?: any) => {
+  let params:any = {value};
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
     case Command.Start: {
       const status = await createDbUser(userTg);
-      value = status;
+      params = {status};
       break;
     }
     case Command.HealthyDays: {
-      const lastSickDay = await getDbLastSickDay(userTg);
-      value = calcPeriodBetweenDates(lastSickDay, dt.now()).days;
+      const lastIllDay = await getDbLastIllDay(userTg);
+      params.value = calcPeriodBetweenDates(lastIllDay, dt.now()).days;
       break;
     }
     case Command.HealthyYear: {
       const periods = await getDbIllPeriods(userTg);
-      value = extractPeriodsFromYear(periods);
+      params.value = extractPeriodsFromYear(periods);
       break;
     }
     case Command.ColdEnd: {
-      const lastPeriod = await getDbLastSickPeriod(userTg);
+      const lastPeriod = await getDbLastIllPeriod(userTg);
       // value = get(lastPeriod); todo return last start date to calc available dates
       break;
     }
   }
 
-  const options = getMessageTemplate(command, value);
+  const options = getMessageTemplate(command, params);
   if (options) {
     await sendMessage(userTg.id, options);
   }

@@ -3,21 +3,19 @@ import {CreateStatus} from "../enums/Statuses.tsx";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 
-export const getMessageTemplate = (command: string, value?: string) => {
+export const getMessageTemplate = (command: string, params?: {value?: string, status?: string}) => {
   const commandKey = command.replace('/', '');
-  return MessageTemplates[commandKey](value);
+  return MessageTemplates[commandKey](params);
 }
 
 const MessageTemplates = {
-  [Command.Start]: (value) => {
-    return value === CreateStatus.Failed
+  [Command.Start]: ({status}) => {
+    return status === CreateStatus.Failed
       ? { text: "Sorry but I couldn't create your profile. \nType 'bug_rescue' to get help from the beloved developer"}
       : { text: `Nice to meet you!\nI'm here to help you make some statistic about your health`}},
-  [Command.Login]: (value) => {
-    return {text: `You've been healthy for ${value} day(s)`}},
-  [Command.HealthyDays]: (value) => {
+  [Command.HealthyDays]: ({value}) => {
     return { text: `You've been healthy for ${value} day(s)`}},
-  [Command.HealthyYear]: (value) => {
+  [Command.HealthyYear]: ({value}) => {
     return {text: `You've been healthy for ${value} day(s) during the last year`}},
   [Command.ColdStart]: () => {
     return {

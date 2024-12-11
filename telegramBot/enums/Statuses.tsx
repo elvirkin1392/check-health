@@ -1,4 +1,4 @@
-export const enum CreateStatus {
+export enum CreateStatus {
   Created = "Created",
   Updated = "Updated",
   Deleted = "Deleted",
