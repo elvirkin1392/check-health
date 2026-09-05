@@ -32,9 +32,22 @@ export const updateUser = async (userId, value) => {
 
 export const updateUserLoginCode = async (id, code) => {
   const users = db.collection('users');
-  const result = await users.updateOne({_id: id}, {$set: {loginCode: code}});
+  const result = await users.updateOne({_id: id}, {$set: {
+    loginCode: code,
+    loginCodeExpiresAt: code ? Date.now() + 5 * 60 * 1000 : null,
+    loginCodeAttempts: 0,
+  }});
 
   return result;
+}
+
+export const incrementLoginCodeAttempts = async (id) => {
+  const users = db.collection('users');
+  return await users.findOneAndUpdate(
+    {_id: id},
+    {$inc: {loginCodeAttempts: 1}},
+    {returnDocument: 'after'}
+  );
 }
 
 export const getOrCreateUserByTelegramId = async (bio) => {

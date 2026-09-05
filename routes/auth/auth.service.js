@@ -1,7 +1,7 @@
 import generateToken from './token.utils.js';
 import HttpException from '../../models/http-exception.model.js';
 import {sendResponseToCommand} from '../../telegramBot/telegram.service.tsx';
-import {getUserBio, getUserLoginCode, updateUserLoginCode, getOrCreateUserByTelegramId} from "./auth.db.js";
+import {getUserBio, getUserLoginCode, updateUserLoginCode, incrementLoginCodeAttempts, getOrCreateUserByTelegramId} from "./auth.db.js";
 import {Command} from "../../telegramBot/enums/Command.tsx";
 import {verifyTelegramInitData} from "./telegramInitData.util.tsx";
 
@@ -26,8 +26,24 @@ export const login = async (username) => {
   }
 }
 
+const MAX_LOGIN_CODE_ATTEMPTS = 5;
+
 export const codeVerification = async (username, code) => {
   const result = await getUserLoginCode(username);
+
+  if (!result || !result.loginCode) {
+    return new Error('Wrong code');
+  }
+
+  if (result.loginCodeExpiresAt && Date.now() > result.loginCodeExpiresAt) {
+    await updateUserLoginCode(result._id, '');
+    return new Error('Code expired, request a new one');
+  }
+
+  if ((result.loginCodeAttempts || 0) >= MAX_LOGIN_CODE_ATTEMPTS) {
+    await updateUserLoginCode(result._id, '');
+    return new Error('Too many attempts, request a new code');
+  }
 
   if (result.loginCode === code) {
     const data = {
@@ -40,6 +56,7 @@ export const codeVerification = async (username, code) => {
     return data;
   }
 
+  await incrementLoginCodeAttempts(result._id);
   return new Error('Wrong code');
 }
 
