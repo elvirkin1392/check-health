@@ -16,7 +16,8 @@ export const sendMessage = (id, options) => {
 
 export const setWebhook = () => {
   return tgAxios.post(`/setWebhook`, {
-    url: 'https://check-health-417373288113.europe-north1.run.app/api/listenWebHook'
+    url: 'https://check-health-417373288113.europe-north1.run.app/api/listenWebHook',
+    secret_token: process.env.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET
   }).then(response => response.data);
 }
 

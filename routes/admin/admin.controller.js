@@ -26,6 +26,11 @@ router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
 
 //api for TG, get updates
 router.post('/listenWebHook', auth.optional, async function (req, res) {
+  const secretToken = req.get('X-Telegram-Bot-Api-Secret-Token');
+  if (secretToken !== process.env.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET) {
+    return res.sendStatus(401);
+  }
+
   const body = req.body;
   try {
     await manageTgUpdates(body);
