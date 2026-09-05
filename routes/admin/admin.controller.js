@@ -1,4 +1,5 @@
 import {Router} from 'express';
+
 import auth from '../auth/auth.js';
 import {manageTgUpdates} from '../../telegramBot/telegram.service.tsx';
 import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.js";
@@ -33,5 +34,4 @@ router.post('/listenWebHook', auth.optional, async function (req, res) {
     return res.status(500).json({message: error?.message});
   }
 })
-
 export default router;
