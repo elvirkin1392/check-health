@@ -17,6 +17,8 @@ const MessageTemplates = {
     return { text: `You've been healthy for ${value} day(s)`}},
   [Command.HealthyYear]: ({value}) => {
     return {text: `You've been healthy for ${value} day(s) during the last year`}},
+  [Command.Login]: ({value}) => {
+    return {text: `Your login code: ${value}`}},
   [Command.ColdStart]: () => {
     return {
       text: 'How long does the flu last?',

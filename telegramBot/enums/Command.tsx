@@ -4,5 +4,6 @@ export enum Command {
   ColdEnd = "cold_end",
   HealthyDays = "healthy_days",
   HealthyYear = "healthy_year",
-  Lang = "lang"
+  Lang = "lang",
+  Login = "login"
 }
