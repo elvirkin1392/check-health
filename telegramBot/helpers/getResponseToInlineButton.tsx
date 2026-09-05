@@ -1,5 +1,5 @@
 import {DateTime as dt} from "luxon";
-import {getMessageTemplate} from "./getMessageTemplate";
+import {getMessageTemplate, decodeCalendarTarget} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, resolveLang, Lang} from "../i18n/index.tsx";
@@ -13,7 +13,8 @@ type Response = {
 export const getResponseToInlineButton = (commandKey: string, value?: any, lang: Lang = 'en'): Response => {
   switch (commandKey) {
     case MessageType.Calendar: {
-      return {closeSession: getMessageTemplate(MessageType.Calendar, {...value, lang})};
+      const {t, y, m} = value;
+      return {closeSession: getMessageTemplate(MessageType.Calendar, {target: decodeCalendarTarget(t), year: y, month: m, lang})};
     }
     case Command.Lang: {
       const newLang = resolveLang(value);

@@ -45,13 +45,22 @@ describe('calendar', () => {
     const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 12, lang: 'en'});
     const [, , nextButton] = result.reply_markup.inline_keyboard[0];
 
-    expect(JSON.parse(nextButton.callback_data).value).toEqual({target: Command.ColdStart, year: 2021, month: 1});
+    expect(JSON.parse(nextButton.callback_data).value).toEqual({t: 's', y: 2021, m: 1});
   });
 
   test('month navigation wraps the year backward at January', () => {
     const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2021, month: 1, lang: 'en'});
     const [prevButton] = result.reply_markup.inline_keyboard[0];
 
-    expect(JSON.parse(prevButton.callback_data).value).toEqual({target: Command.ColdStart, year: 2020, month: 12});
+    expect(JSON.parse(prevButton.callback_data).value).toEqual({t: 's', y: 2020, m: 12});
+  });
+
+  test('keeps every button under Telegram\'s 64-byte callback_data limit', () => {
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 12, lang: 'ru'});
+    const allButtons = result.reply_markup.inline_keyboard.flat();
+
+    allButtons.forEach((btn: any) => {
+      expect(Buffer.byteLength(btn.callback_data, 'utf8')).toBeLessThanOrEqual(64);
+    });
   });
 })

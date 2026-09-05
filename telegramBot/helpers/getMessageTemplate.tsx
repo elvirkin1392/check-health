@@ -18,9 +18,15 @@ const getWeekdayLabels = (lang: Lang) => {
 
 type CalendarParams = {target: string, year: number, month: number, lang: Lang};
 
+// Telegram caps callback_data at 64 bytes, so navigation buttons carry a
+// short target code instead of the full command string.
+const CALENDAR_TARGET_CODES: Record<string, string> = {[Command.ColdStart]: 's', [Command.ColdEnd]: 'e'};
+const CALENDAR_TARGET_FROM_CODE: Record<string, string> = {s: Command.ColdStart, e: Command.ColdEnd};
+export const decodeCalendarTarget = (code: string): string => CALENDAR_TARGET_FROM_CODE[code] ?? code;
+
 const navButton = (text: string, {target, year, month}: Omit<CalendarParams, 'lang'>) => ({
   text,
-  callback_data: JSON.stringify({command: MessageType.Calendar, value: {target, year, month}})
+  callback_data: JSON.stringify({command: MessageType.Calendar, value: {t: CALENDAR_TARGET_CODES[target] ?? target, y: year, m: month}})
 });
 
 const buildCalendar = ({target, year, month, lang}: CalendarParams) => {
