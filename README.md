@@ -9,6 +9,8 @@ Collect data of diseases, medical tests, show statistics
 ## Demo
 Here is a working live demo : [in development]
 
+![Architecture](./architecture.svg)
+
 ## Links
 
 - https://tlgrm.ru/docs/bots/api

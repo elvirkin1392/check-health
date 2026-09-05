@@ -1,0 +1,54 @@
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Telegram и веб-клиент на GitHub Pages обращаются к одному backend на Cloud Run, который читает и пишет в MongoDB Atlas; GitHub Actions деплоит клиент и сервер на каждый push в master.">
+  <rect x="0" y="0" width="900" height="500" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#152018" />
+    </marker>
+  </defs>
+
+  <!-- Telegram -->
+  <rect x="40" y="40" width="220" height="72" rx="4" fill="none" stroke="#152018" stroke-width="1.4"/>
+  <text x="150" y="70" text-anchor="middle" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="600" font-size="16" fill="#152018">Telegram</text>
+  <text x="150" y="90" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#4F5F53">чат-бот + Mini App</text>
+
+  <!-- GitHub Pages -->
+  <rect x="640" y="40" width="220" height="72" rx="4" fill="none" stroke="#152018" stroke-width="1.4"/>
+  <text x="750" y="70" text-anchor="middle" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="600" font-size="16" fill="#152018">GitHub Pages</text>
+  <text x="750" y="90" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#4F5F53">статичный React-клиент</text>
+
+  <!-- Backend (hub, accented) -->
+  <rect x="340" y="212" width="220" height="80" rx="4" fill="none" stroke="#276A52" stroke-width="2"/>
+  <text x="450" y="245" text-anchor="middle" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="600" font-size="16" fill="#276A52">Backend</text>
+  <text x="450" y="266" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#276A52">Express · Cloud Run</text>
+
+  <!-- MongoDB -->
+  <rect x="40" y="400" width="220" height="72" rx="4" fill="none" stroke="#152018" stroke-width="1.4"/>
+  <text x="150" y="430" text-anchor="middle" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="600" font-size="16" fill="#152018">MongoDB Atlas</text>
+  <text x="150" y="450" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="11.5" fill="#4F5F53">users · ill_periods · tgJobs</text>
+
+  <!-- GitHub Actions -->
+  <rect x="640" y="400" width="220" height="72" rx="4" fill="none" stroke="#152018" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="750" y="430" text-anchor="middle" font-family="IBM Plex Sans, Arial, sans-serif" font-weight="600" font-size="16" fill="#152018">GitHub Actions</text>
+  <text x="750" y="450" text-anchor="middle" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#4F5F53">CI/CD на каждый push</text>
+
+  <!-- Telegram <-> Backend -->
+  <line x1="245" y1="112" x2="365" y2="230" stroke="#152018" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="252" y="168" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">webhook · initData</text>
+  <text x="252" y="184" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">· sendMessage</text>
+
+  <!-- GitHub Pages -> Backend -->
+  <line x1="655" y1="112" x2="545" y2="230" stroke="#152018" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="565" y="168" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">запросы с JWT</text>
+
+  <!-- Backend <-> MongoDB -->
+  <line x1="385" y1="292" x2="225" y2="400" stroke="#152018" stroke-width="1.4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="238" y="358" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">чтение / запись</text>
+
+  <!-- GitHub Actions -> Backend (dashed) -->
+  <line x1="675" y1="400" x2="530" y2="292" stroke="#152018" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="565" y="358" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">деплой на push</text>
+
+  <!-- GitHub Actions -> GitHub Pages (dashed, vertical) -->
+  <line x1="750" y1="400" x2="750" y2="112" stroke="#152018" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="762" y="260" font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#152018">деплой на push</text>
+</svg>
