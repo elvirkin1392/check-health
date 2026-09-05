@@ -15,8 +15,7 @@ const PageInfo = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const username = localStorage.getItem('username');
-      const result = await axios.get('api/profile', {params: {username}});
+      const result = await axios.get('api/profile');
       setData(result.data);
     }
 
