@@ -29,7 +29,6 @@ jobs:
           cat > env.yaml << EOF
           CHECK_HEALTH_TELEGRAM_BOT_TOKEN: "${{ secrets.CHECK_HEALTH_TELEGRAM_BOT_TOKEN }}"
           CHECK_HEALTH_DB_HOST: "${{ secrets.CHECK_HEALTH_DB_HOST }}"
-          CHECK_HEALTH_CHAT_ID: "${{ secrets.CHECK_HEALTH_CHAT_ID }}"
           JWT_SECRET: "${{ secrets.JWT_SECRET }}"
           CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET: "${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}"
           EOF
