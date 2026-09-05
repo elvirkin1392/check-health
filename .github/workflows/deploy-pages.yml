@@ -34,9 +34,18 @@ jobs:
 
       - run: npm ci
 
+      - name: Verify API host is configured
+        run: |
+          if [ -z "$VITE_CHECK_HEALTH_API_HOST" ]; then
+            echo "::error::VITE_CHECK_HEALTH_API_HOST is empty. Set it in Settings > Secrets and variables > Actions, either as a repo Variable or a Secret."
+            exit 1
+          fi
+        env:
+          VITE_CHECK_HEALTH_API_HOST: ${{ vars.VITE_CHECK_HEALTH_API_HOST || secrets.VITE_CHECK_HEALTH_API_HOST }}
+
       - run: npm run build
         env:
-          VITE_CHECK_HEALTH_API_HOST: ${{ vars.VITE_CHECK_HEALTH_API_HOST }}
+          VITE_CHECK_HEALTH_API_HOST: ${{ vars.VITE_CHECK_HEALTH_API_HOST || secrets.VITE_CHECK_HEALTH_API_HOST }}
 
       # SPA fallback: GitHub Pages has no server-side rewrites, so a
       # direct link to e.g. /statistics would 404. Serving index.html
