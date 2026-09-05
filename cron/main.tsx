@@ -66,11 +66,19 @@ export const restoreJobs = async () => {
   const jobs = await tgJobs.find({}).toArray();
 
   for (const job of jobs) {
-    scheduleJob({
-      jobIdDb: job.jobIdDb,
-      userId: job.userId,
-      messageTemplate: JSON.parse(job.messageTemplate),
-      cronTime: job.cronTime,
-    });
+    if (!job.cronTime) {
+      console.error(`Skipping tgJobs record ${job.jobIdDb} — no cronTime stored (created before this field existed)`);
+      continue;
+    }
+    try {
+      scheduleJob({
+        jobIdDb: job.jobIdDb,
+        userId: job.userId,
+        messageTemplate: JSON.parse(job.messageTemplate),
+        cronTime: job.cronTime,
+      });
+    } catch (error) {
+      console.error(`Failed to restore job ${job.jobIdDb}`, error);
+    }
   }
 }
