@@ -1,10 +1,11 @@
-import { useState} from "react";
+import {useEffect, useState} from "react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 
 import PageStatistics from './pageStatistics/index.tsx'
 import PageInfo from './pageInfo/index.tsx'
 import PageAuth from './pageAuth/index.tsx'
 import {instance as axios} from "./axios";
+import {telegramLogin} from "./pageAuth/api";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,29 @@ export default function App() {
   const [isAuthorized, setAuthorized] = useState(Boolean(username));
   const authorize = (value: boolean) => {
     setAuthorized(value);
+  }
+
+  const tg = window.Telegram?.WebApp;
+  const [isCheckingTelegram, setCheckingTelegram] = useState(!isAuthorized && Boolean(tg?.initData));
+
+  useEffect(() => {
+    if (!tg) {
+      return;
+    }
+    tg.ready();
+    tg.expand();
+
+    if (isAuthorized || !tg.initData) {
+      return;
+    }
+
+    telegramLogin(tg.initData)
+      .then(({isCodeVerified}) => setAuthorized(isCodeVerified))
+      .finally(() => setCheckingTelegram(false));
+  }, []);
+
+  if (isCheckingTelegram) {
+    return null;
   }
 
   return (

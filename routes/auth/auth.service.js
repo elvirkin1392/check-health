@@ -1,8 +1,9 @@
 import generateToken from './token.utils.js';
 import HttpException from '../../models/http-exception.model.js';
 import {sendResponseToCommand} from '../../telegramBot/telegram.service.tsx';
-import {getUserBio, getUserLoginCode, updateUserLoginCode} from "./auth.db.js";
+import {getUserBio, getUserLoginCode, updateUserLoginCode, getOrCreateUserByTelegramId} from "./auth.db.js";
 import {Command} from "../../telegramBot/enums/Command.tsx";
+import {verifyTelegramInitData} from "./telegramInitData.util.tsx";
 
 export const login = async (username) => {
   if (!username) {
@@ -40,5 +41,19 @@ export const codeVerification = async (username, code) => {
   }
 
   return new Error('Wrong code');
+}
+
+export const loginWithTelegramWebApp = async (initData) => {
+  const telegramUser = verifyTelegramInitData(initData, process.env.CHECK_HEALTH_TELEGRAM_BOT_TOKEN);
+  if (!telegramUser) {
+    throw new HttpException(401, "Invalid Telegram Web App data");
+  }
+
+  const user = await getOrCreateUserByTelegramId(telegramUser);
+
+  return {
+    bio: user.bio,
+    accessToken: generateToken(user._id),
+  }
 }
 

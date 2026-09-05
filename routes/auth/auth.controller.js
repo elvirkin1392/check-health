@@ -1,7 +1,7 @@
 import {Router} from 'express';
 
 import auth from './auth.js';
-import {codeVerification, login} from './auth.service.js';
+import {codeVerification, login, loginWithTelegramWebApp} from './auth.service.js';
 
 const router = Router();
 
@@ -22,6 +22,16 @@ router.post("/codeVerification", auth.optional, async function (req, res) {
   } catch (error) {
     console.error(error)
     res.sendStatus(500, error);
+  }
+});
+
+router.post("/telegramAuth", auth.optional, async function (req, res) {
+  try {
+    const user = await loginWithTelegramWebApp(req.body.initData);
+    res.json(user);
+  } catch (error) {
+    console.error(error)
+    res.status(error.errorCode || 500).json({message: error?.message});
   }
 });
 
