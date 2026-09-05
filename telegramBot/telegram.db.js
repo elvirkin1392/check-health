@@ -52,8 +52,10 @@ export const getDbLastIllDay = async (user) => {
   const users = db.collection('users');
   try {
     const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
-    const lastIllDay = periods[periods.length - 1].end_date || dt.now();
-    return lastIllDay;
+    if (!periods || periods.length === 0) {
+      return undefined;
+    }
+    return periods[periods.length - 1].end_date || dt.now();
   } catch (e) {
     throw e;
   }
@@ -72,6 +74,9 @@ export const getDbLastIllPeriod = async (user) => {
   const users = db.collection('users');
   try {
     const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
+    if (!periods || periods.length === 0) {
+      return undefined;
+    }
     return periods[periods.length - 1];
   } catch (e) {
     throw e;

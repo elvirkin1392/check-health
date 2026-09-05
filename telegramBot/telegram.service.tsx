@@ -55,7 +55,7 @@ const sendResponseToCommand = async (userTg: User, command: string, value?: any)
     }
     case Command.HealthyDays: {
       const lastIllDay = await getDbLastIllDay(userTg);
-      params.value = calcPeriodBetweenDates(lastIllDay, dt.now()).days;
+      params.value = lastIllDay ? calcPeriodBetweenDates(lastIllDay, dt.now()).days : undefined;
       break;
     }
     case Command.HealthyYear: {

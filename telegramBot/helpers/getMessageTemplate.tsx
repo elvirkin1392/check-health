@@ -14,7 +14,9 @@ const MessageTemplates = {
       ? { text: "Sorry but I couldn't create your profile. \nType 'bug_rescue' to get help from the beloved developer"}
       : { text: `Nice to meet you!\nI'm here to help you make some statistic about your health`}},
   [Command.HealthyDays]: ({value}) => {
-    return { text: `You've been healthy for ${value} day(s)`}},
+    return value === undefined
+      ? {text: "You haven't logged any illness yet — you're doing great!"}
+      : {text: `You've been healthy for ${value} day(s)`}},
   [Command.HealthyYear]: ({value}) => {
     return {text: `You've been healthy for ${value} day(s) during the last year`}},
   [Command.Login]: ({value}) => {
