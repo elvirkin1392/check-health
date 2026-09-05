@@ -2,6 +2,7 @@ import {DateTime as dt} from "luxon";
 import {getMessageTemplate} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
+import {translate, resolveLang, Lang} from "../i18n/index.tsx";
 
 type Response = {
   closeSession?: { text: string, reply_markup?: any },
@@ -9,14 +10,21 @@ type Response = {
   jobConfig?: any,
 }
 
-export const getResponseToInlineButton = (commandKey: string, value?: any): Response => {
+export const getResponseToInlineButton = (commandKey: string, value?: any, lang: Lang = 'en'): Response => {
   switch (commandKey) {
     case MessageType.Calendar: {
-      return {closeSession: getMessageTemplate(MessageType.Calendar, value)};
+      return {closeSession: getMessageTemplate(MessageType.Calendar, {...value, lang})};
+    }
+    case Command.Lang: {
+      const newLang = resolveLang(value);
+      return {
+        closeSession: {text: translate('lang_saved', newLang)},
+        updateData: {lang: newLang}
+      };
     }
     case Command.ColdStart: {
       if (!value) {
-        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: dt.now().year, month: dt.now().month})};
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: dt.now().year, month: dt.now().month, lang})};
       }
       //todo move validation
       // if (dt.fromISO(value) > dt.now()) {
@@ -24,11 +32,11 @@ export const getResponseToInlineButton = (commandKey: string, value?: any): Resp
       // }
 
       return {
-        closeSession: {text: 'Calendar has been updated'},
+        closeSession: {text: translate('calendar_updated', lang)},
         updateData: {start_date: value, end_date: null},
         jobConfig: {
           cronTime: '10 * * * * *', //for testing every 10 sec todo change to every day
-          messageTemplate: getMessageTemplate(MessageType.CheckHealth),
+          messageTemplate: getMessageTemplate(MessageType.CheckHealth, {lang}),
           type: MessageType.CheckHealth
         }
       }
@@ -41,11 +49,11 @@ export const getResponseToInlineButton = (commandKey: string, value?: any): Resp
       //TODO validation, if start_date is today, then end_date can't be earlier
 
       if (!value) {
-        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdEnd, year: dt.now().year, month: dt.now().month})};
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdEnd, year: dt.now().year, month: dt.now().month, lang})};
       }
 
       return {
-        closeSession: {text: 'Calendar has been updated'},
+        closeSession: {text: translate('calendar_updated', lang)},
         updateData: {end_date: value},
         jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
       };
@@ -53,7 +61,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: any): Resp
     case MessageType.CheckHealth: {
       if(value) {
         return {
-          closeSession: {text: 'Ill period was closed. Hooray!'},
+          closeSession: {text: translate('ill_period_closed', lang)},
           updateData: {end_date: value},
           jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
         };

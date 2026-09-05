@@ -3,5 +3,6 @@ export const UserTemplate = {
   blood_tests: [],
   ill_periods: [],
   woman_days: [],
-  loginCode: ''
+  loginCode: '',
+  lang: ''
 }

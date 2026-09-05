@@ -3,6 +3,7 @@ import {db} from "../db/dbClient.js";
 import {getQuery} from "./helpers/dbQueries.tsx";
 import {UserTemplate} from "../db/templates/UserTemplate.tsx";
 import {CreateStatus} from "./enums/Statuses.tsx";
+import {resolveLang} from "./i18n/index.tsx";
 
 export const createDbUser = async (userTg) => {
   const users = db.collection('users');
@@ -81,6 +82,13 @@ export const getDbLastIllPeriod = async (user) => {
   } catch (e) {
     throw e;
   }
+}
+
+export const getDbUserLang = async (userTg) => {
+  const {id: userId, language_code} = userTg;
+  const users = db.collection('users');
+  const user = await users.findOne({"bio.id": userId}, {projection: {lang: 1}});
+  return resolveLang(user?.lang || language_code);
 }
 
 export const getDbIllPeriods = async (user) => {

@@ -5,7 +5,7 @@ import {CreateStatus} from "../enums/Statuses.tsx";
 
 describe('getMessageTemplate', () => {
   test('getMessageTemplate', () => {
-    expect(getMessageTemplate(Command.Start, {status: CreateStatus.Failed}))
+    expect(getMessageTemplate(Command.Start, {status: CreateStatus.Failed, lang: 'en'}))
       .toStrictEqual({ text: "Sorry but I couldn't create your profile. \nType 'bug_rescue' to get help from the beloved developer"});
   });
 
@@ -19,7 +19,7 @@ describe('calendar', () => {
     rows.slice(2).flat().filter((btn) => JSON.parse(btn.callback_data).command === Command.ColdStart);
 
   test('renders every day of a fully past month as pickable', () => {
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 2});
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 2, lang: 'en'});
     const buttons = dayButtons(result.reply_markup.inline_keyboard);
 
     expect(buttons).toHaveLength(29); // February 2020 — leap year
@@ -27,7 +27,7 @@ describe('calendar', () => {
   });
 
   test('every day row has exactly 7 cells', () => {
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 2});
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 2, lang: 'en'});
     result.reply_markup.inline_keyboard.slice(2).forEach((row: any[]) => {
       expect(row).toHaveLength(7);
     });
@@ -35,21 +35,21 @@ describe('calendar', () => {
 
   test('does not offer future dates as pickable', () => {
     const now = new Date();
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: now.getFullYear(), month: now.getMonth() + 1});
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: now.getFullYear(), month: now.getMonth() + 1, lang: 'en'});
     const buttons = dayButtons(result.reply_markup.inline_keyboard);
 
     expect(buttons).toHaveLength(now.getDate());
   });
 
   test('month navigation wraps the year forward at December', () => {
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 12});
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2020, month: 12, lang: 'en'});
     const [, , nextButton] = result.reply_markup.inline_keyboard[0];
 
     expect(JSON.parse(nextButton.callback_data).value).toEqual({target: Command.ColdStart, year: 2021, month: 1});
   });
 
   test('month navigation wraps the year backward at January', () => {
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2021, month: 1});
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2021, month: 1, lang: 'en'});
     const [prevButton] = result.reply_markup.inline_keyboard[0];
 
     expect(JSON.parse(prevButton.callback_data).value).toEqual({target: Command.ColdStart, year: 2020, month: 12});

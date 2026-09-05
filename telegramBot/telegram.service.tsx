@@ -1,7 +1,7 @@
 import {DateTime as dt} from "luxon";
 
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, createDbUser} from "./telegram.db.js";
+import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, createDbUser} from "./telegram.db.js";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,
@@ -14,7 +14,11 @@ import {toggleJob} from "../cron/main.tsx";
 import {Command} from "./enums/Command";
 
 const manageTgUpdates = async (update: Update) => {
-  const {messageType, userTg, message} = restructureUpdatesData(update);
+  const info = restructureUpdatesData(update);
+  if (!info) {
+    return;
+  }
+  const {messageType, userTg, message} = info;
 
   switch (messageType) {
     case 'bot_command': {
@@ -23,7 +27,8 @@ const manageTgUpdates = async (update: Update) => {
     }
     case 'inline_button': {
       const {command, value} = JSON.parse(message);
-      const nextMove = getResponseToInlineButton(command, value);
+      const lang = await getDbUserLang(userTg);
+      const nextMove = getResponseToInlineButton(command, value, lang);
 
       if (nextMove.updateData) {
         await updateDbData({
@@ -44,13 +49,14 @@ const manageTgUpdates = async (update: Update) => {
 }
 
 const sendResponseToCommand = async (userTg: User, command: string, value?: any) => {
-  let params:any = {value};
+  const lang = await getDbUserLang(userTg);
+  let params:any = {value, lang};
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
     case Command.Start: {
       const status = await createDbUser(userTg);
-      params = {status};
+      params = {status, lang};
       break;
     }
     case Command.HealthyDays: {

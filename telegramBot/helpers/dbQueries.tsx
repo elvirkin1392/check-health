@@ -10,6 +10,10 @@ export const getQuery = (user, command, data) => {
     case Command.ColdEnd: {
       return getColdEndQuery(user, command, data);
     }
+
+    case Command.Lang: {
+      return {$set: {lang: data.lang}};
+    }
   }
   return undefined;
 }
