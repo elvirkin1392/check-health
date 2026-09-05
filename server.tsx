@@ -3,6 +3,7 @@ import path from 'node:path';
 import express from 'express';
 import {fileURLToPath} from 'node:url';
 import routes from './routes/routes.js';
+import {restoreJobs} from './cron/main.tsx';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,4 +20,6 @@ const port = parseInt(process.env.PORT) || 3000;
 app.listen(port, () => {
     console.log('http://localhost:' + port);
 });
+
+restoreJobs().catch((error) => console.error('Failed to restore cron jobs', error));
 
