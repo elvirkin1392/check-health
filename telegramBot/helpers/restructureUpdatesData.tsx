@@ -4,7 +4,7 @@ type Info = {
   userTg: User,
   message: string
 }
-export const restructureUpdatesData = (data: Update): Info => {
+export const restructureUpdatesData = (data: Update): Info | undefined => {
   if (data.message?.entities && data.message.entities[0].type === 'bot_command') {
     return {
       messageType: 'bot_command',
@@ -26,4 +26,5 @@ export const restructureUpdatesData = (data: Update): Info => {
       message: data.message.text
     }
   }
+  return undefined;
 }

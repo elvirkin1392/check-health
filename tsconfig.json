@@ -22,5 +22,5 @@
     "baseUrl": "."
   },
 //  "include": ["src/**/*", "__tests__/**/*"],
-  "exclude": ["node_modules", "build", "client"]
+  "exclude": ["node_modules", "build", "client", "server.tsx"]
 }

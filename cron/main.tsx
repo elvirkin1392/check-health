@@ -1,19 +1,21 @@
 import {CronJob} from 'cron';
-import {DateTime as dt} from "luxon";
 
 import {sendMessage} from "../telegramBot/telegram.api";
 import {db} from "../db/dbClient";
 
+type StopConfig = {shouldStop: true, userId: string, type: string};
+type StartConfig = {shouldStop?: false, userId: string, type: string, messageTemplate: any, cronTime: string};
+
 //TODO add restart jobs functionality
-export const toggleJob = async ({shouldStop, ...config}) => {
-  if (shouldStop) {
-    await stopJob(config)
+export const toggleJob = async (config: StopConfig | StartConfig) => {
+  if (config.shouldStop === true) {
+    await stopJob(config);
   } else {
-    const jobIdDb = await startJob(config);
+    await startJob(config);
   }
 }
 
-export const startJob = async (config: { userId: string, messageTemplate: any, cronTime: string }) => {
+export const startJob = async (config: { userId: string, type: string, messageTemplate: any, cronTime: string }): Promise<number | undefined> => {
   const {
     type,
     userId,
@@ -25,7 +27,7 @@ export const startJob = async (config: { userId: string, messageTemplate: any, c
   const isJobRunning = await tgJobs.findOne({"userId": userId, "type": type});
 
   if (isJobRunning) {
-    return;
+    return undefined;
   }
 
   const jobIdDb = Date.now();
@@ -49,17 +51,7 @@ export const startJob = async (config: { userId: string, messageTemplate: any, c
 
   return jobIdDb;
 }
-export const stopJob = async ({userId, type}) => {
+export const stopJob = async ({userId, type}: {userId: string, type: string}) => {
   const tgJobs = db.collection('tgJobs');
   await tgJobs.deleteOne({"userId": userId, "type": type});
-}
-
-type Job = {
-  cronTime: string | Date | dt,
-  onTick: () => void | Promise<void>,
-  onComplete?: () => void | Promise<void>,
-  start?: boolean | null,
-  context?: any,
-  runOnInit?: boolean | null,
-  unrefTimeout?: boolean | null
 }

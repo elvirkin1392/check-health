@@ -11,9 +11,10 @@ export const getQuery = (user, command, data) => {
       return getColdEndQuery(user, command, data);
     }
   }
+  return undefined;
 }
 
-export const getColdStartQuery = (user, command, data) => {
+export const getColdStartQuery = (user, _command, data) => {
   const periods = user.ill_periods;
   const lastPeriod = periods?.[periods.length - 1];
 
@@ -30,12 +31,12 @@ export const getColdStartQuery = (user, command, data) => {
 
       return [{$push: {ill_periods: data}}, query]
     }
-    return;
+    return undefined;
   }
   return {$push: {ill_periods: data}};
 }
 
-export const getColdEndQuery = (user, command, data) => {
+export const getColdEndQuery = (user, _command, data) => {
   const periods = user.ill_periods;
   const lastPeriod = periods?.[periods.length - 1];
 
@@ -45,5 +46,5 @@ export const getColdEndQuery = (user, command, data) => {
 
     return {$set: {[fieldName]: data.end_date}};
   }
-
+  return undefined;
 }

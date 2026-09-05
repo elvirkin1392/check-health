@@ -1,4 +1,3 @@
-import {DateTime as dt} from "luxon";
 import {getMessageTemplate} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
@@ -55,6 +54,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
           jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
         };
       }
+      return {};
     }
     default: {
       return {}

@@ -64,7 +64,7 @@ const sendResponseToCommand = async (userTg: User, command: string, value?: any)
       break;
     }
     case Command.ColdEnd: {
-      const lastPeriod = await getDbLastIllPeriod(userTg);
+      await getDbLastIllPeriod(userTg);
       // value = get(lastPeriod); todo return last start date to calc available dates
       break;
     }
