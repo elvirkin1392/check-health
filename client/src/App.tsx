@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     path: "/statistics",
     element: <PageStatistics/>,
   },
-]);
+], {basename: import.meta.env.BASE_URL});
 
 export default function App() {
   const username = localStorage.getItem('username');
