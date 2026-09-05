@@ -1,8 +1,8 @@
-import {countDaysFromLastPeriodTilNow, countSummaryFromDayPeriodsLastYear} from "./utils";
+import {countDaysFromLastPeriodTilNow, countSummaryFromDayPeriodsLastYear, DatePeriod} from "./utils";
 import {Switch, Container} from '../components/main';
 import {SNumber, SSummary, SWrap} from "./styled/HealthyDays";
 
-const HealthyDays = ({info, isMobile}: { info: any, isMobile?: boolean }) => {
+const HealthyDays = ({info, isMobile}: { info: DatePeriod[], isMobile?: boolean }) => {
     const sickDays = countSummaryFromDayPeriodsLastYear(info);
     const healthyDays = countDaysFromLastPeriodTilNow(info);
 

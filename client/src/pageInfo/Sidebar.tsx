@@ -1,11 +1,6 @@
 import {Title, Username} from './styled/main';
 import {Avatar, Button, Container} from "../components/main";
-
-type Bio = {
-  first_name: String;
-  second_name: String;
-  username: String
-};
+import {Bio} from "./types";
 
 const defaultValue = {
   first_name: '',

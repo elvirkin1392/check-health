@@ -1,8 +1,9 @@
 import {Container} from "../components/main";
 import HealthyDays from "./HealthyDays";
 import Table from "./Table";
+import {UserData} from "./types";
 
-const MobileVersion = ({data}: {data: any}) => {
+const MobileVersion = ({data}: {data: UserData}) => {
   const {
     bio = {
       first_name: '',

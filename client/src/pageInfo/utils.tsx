@@ -5,7 +5,7 @@ const getDiffDays = (start: Date, end:Date): number => {
   return diffDays;
 }
 
-type DatePeriod = {
+export type DatePeriod = {
   start_date: Date;
   end_date: Date;
 };
@@ -45,7 +45,7 @@ function getDaysInMonth(month: number, year: number): number {
   return new Date(year, month, 0).getDate();
 }
 
-export function getCalendar(calendarLength : number): any[] {
+export function getCalendar(calendarLength : number): number[] {
   const date = new Date();
   const datesArr = new Array(calendarLength);
   const currentMonthLength = getDaysInMonth(date.getMonth(), date.getFullYear());

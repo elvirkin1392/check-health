@@ -4,8 +4,9 @@ import HealthyDays from "./HealthyDays";
 import Calendar from "./Calendar";
 import Sidebar from "./Sidebar";
 import Table from "./Table"
+import {UserData} from "./types";
 
-const PcVersion = ({data}: {data: any}) => {
+const PcVersion = ({data}: {data: UserData}) => {
 
   return (
     <Container>

@@ -4,7 +4,7 @@ import {loginRequest, codeVerification} from "./api";
 import {Button, Input} from '../components/main';
 import {Container} from './styled';
 
-const PageAuth = ({onAuthorize}: { onAuthorize: Function; }) => {
+const PageAuth = ({onAuthorize}: { onAuthorize: (value: boolean) => void; }) => {
   const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [username, setUsername] = useState('');
   const [code, setCode] = useState('');

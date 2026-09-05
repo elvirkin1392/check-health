@@ -4,15 +4,14 @@ import {instance as axios} from "../axios";
 import {useMediaQuery} from "../hooks/useMediaQuery";
 import PcVersion from "./PcVersion";
 import MobileVersion from "./MobileVersion";
-
-type UserData = {
-  bio: {};
-  ill_periods: [];
-};
+import {UserData} from "./types";
 
 const PageInfo = () => {
   const [isMobile] = useMediaQuery();
-  const [data, setData] = useState<UserData>({bio: {}, ill_periods: []});
+  const [data, setData] = useState<UserData>({
+    bio: {first_name: '', second_name: '', username: ''},
+    ill_periods: []
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
