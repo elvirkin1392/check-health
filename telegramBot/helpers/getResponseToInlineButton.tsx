@@ -1,18 +1,22 @@
+import {DateTime as dt} from "luxon";
 import {getMessageTemplate} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 
 type Response = {
-  closeSession?: { text: string },
+  closeSession?: { text: string, reply_markup?: any },
   updateData?: any,
   jobConfig?: any,
 }
 
-export const getResponseToInlineButton = (commandKey: string, value?: string): Response => {
+export const getResponseToInlineButton = (commandKey: string, value?: any): Response => {
   switch (commandKey) {
+    case MessageType.Calendar: {
+      return {closeSession: getMessageTemplate(MessageType.Calendar, value)};
+    }
     case Command.ColdStart: {
       if (!value) {
-        return getMessageTemplate(MessageType.Calendar)
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: dt.now().year, month: dt.now().month})};
       }
       //todo move validation
       // if (dt.fromISO(value) > dt.now()) {
@@ -37,7 +41,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: string): R
       //TODO validation, if start_date is today, then end_date can't be earlier
 
       if (!value) {
-        return getMessageTemplate(MessageType.Calendar)
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdEnd, year: dt.now().year, month: dt.now().month})};
       }
 
       return {
