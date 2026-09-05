@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.tsx",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "check-ts": "tsc --noEmit",
     "start": "npx tsx server.tsx",
     "deploy": "gcloud run deploy check-health --source . --region europe-north1",
     "dev": "npx tsx watch --env-file=.env server.tsx",

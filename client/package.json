@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "preview": "vite preview",
     "check-ts": "npx tsc --project tsconfig.app.json --noEmit"
   },
