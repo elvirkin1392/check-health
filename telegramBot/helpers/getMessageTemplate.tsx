@@ -5,7 +5,8 @@ import {MessageType} from "../enums/MessageType";
 
 export const getMessageTemplate = (command: string, params?: {value?: string, status?: string}) => {
   const commandKey = command.replace('/', '');
-  return MessageTemplates[commandKey](params);
+  const template = MessageTemplates[commandKey];
+  return template ? template(params) : undefined;
 }
 
 const MessageTemplates = {

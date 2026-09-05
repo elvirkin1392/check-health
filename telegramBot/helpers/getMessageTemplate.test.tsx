@@ -7,4 +7,8 @@ describe('getMessageTemplate', () => {
     expect(getMessageTemplate(Command.Start, {status: CreateStatus.Failed}))
       .toStrictEqual({ text: "Sorry but I couldn't create your profile. \nType 'bug_rescue' to get help from the beloved developer"});
   });
+
+  test('returns undefined instead of throwing for an unknown command', () => {
+    expect(getMessageTemplate('/some_typo')).toBeUndefined();
+  });
 })
