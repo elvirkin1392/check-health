@@ -71,9 +71,10 @@ export const loginWithTelegramWebApp = async (initData, timeZone) => {
   const user = await getOrCreateUserByTelegramId(telegramUser);
 
   // The zone comes from the client, so it is validated rather than trusted (§13).
-  // An unknown or unchanged value is ignored: the reminder then keeps whatever
-  // the user set via /timezone, or falls back to UTC.
-  if (isValidTimeZone(timeZone) && user.timeZone !== timeZone) {
+  // Set once, and only when we have none: a zone the user picked via /timezone is
+  // their decision and must not be overwritten by the device they happen to open
+  // the Mini App on. Changing it afterwards is done through that command.
+  if (!user.timeZone && isValidTimeZone(timeZone)) {
     await updateUser(user._id, {timeZone});
     await rescheduleUserJobs(telegramUser.id, timeZone);
   }
