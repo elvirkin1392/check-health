@@ -9,6 +9,9 @@ export type UserDoc = {
   woman_days: unknown[],
   loginCode: string,
   lang?: string,
+  // Optional by §8: documents written before the daily reminder had a time zone
+  // carry no such field, and the reminder falls back to UTC for them.
+  timeZone?: string,
 };
 
 export const UserTemplate = {
@@ -17,5 +20,6 @@ export const UserTemplate = {
   ill_periods: [],
   woman_days: [],
   loginCode: '',
-  lang: ''
+  lang: '',
+  timeZone: ''
 }

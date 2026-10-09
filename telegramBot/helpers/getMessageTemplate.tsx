@@ -3,6 +3,7 @@ import {CreateStatus} from "../enums/Statuses.tsx";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, Lang} from "../i18n/index.tsx";
+import {TIME_ZONE_OPTIONS, resolveTimeZone} from "./reminderSchedule";
 
 export const getMessageTemplate = (command: string, params?: any) => {
   const commandKey = command.replace('/', '');
@@ -61,6 +62,21 @@ const buildCalendar = ({target, year, month, lang}: CalendarParams) => {
   return {text: translate('choose_a_date', lang), reply_markup: {inline_keyboard: rows}};
 }
 
+// The offset is read live from luxon so the label stays honest across DST,
+// and the city comes from the zone name itself — no per-zone translation (§12).
+const timeZoneButton = (zone: string) => ({
+  text: `${zone.split('/').pop().replace(/_/g, ' ')} ${dt.now().setZone(zone).toFormat('ZZ')}`,
+  callback_data: JSON.stringify({command: Command.TimeZone, value: zone})
+});
+
+const buildTimeZoneKeyboard = () => {
+  const rows: any[] = [];
+  for (let i = 0; i < TIME_ZONE_OPTIONS.length; i += 2) {
+    rows.push(TIME_ZONE_OPTIONS.slice(i, i + 2).map(timeZoneButton));
+  }
+  return rows;
+}
+
 const MessageTemplates = {
   [Command.Start]: ({status, lang}) => {
     return {text: translate(status === CreateStatus.Failed ? 'start_failed' : 'start_created', lang)}},
@@ -78,6 +94,14 @@ const MessageTemplates = {
           {text: 'English', callback_data: JSON.stringify({command: Command.Lang, value: 'en'})},
           {text: 'Русский', callback_data: JSON.stringify({command: Command.Lang, value: 'ru'})}
         ]],
+        one_time_keyboard: true
+      }
+    }},
+  [Command.TimeZone]: ({value, lang}) => {
+    return {
+      text: translate('timezone_prompt', lang, {value: resolveTimeZone(value)}),
+      reply_markup: {
+        inline_keyboard: buildTimeZoneKeyboard(),
         one_time_keyboard: true
       }
     }},

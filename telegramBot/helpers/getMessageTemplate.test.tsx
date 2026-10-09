@@ -2,6 +2,7 @@ import {getMessageTemplate} from './getMessageTemplate.tsx';
 import {Command} from "../enums/Command.tsx";
 import {MessageType} from "../enums/MessageType.tsx";
 import {CreateStatus} from "../enums/Statuses.tsx";
+import {DEFAULT_TIME_ZONE, TIME_ZONE_OPTIONS} from "./reminderSchedule.tsx";
 
 describe('getMessageTemplate', () => {
   test('getMessageTemplate', () => {
@@ -62,5 +63,45 @@ describe('calendar', () => {
     allButtons.forEach((btn: any) => {
       expect(Buffer.byteLength(btn.callback_data, 'utf8')).toBeLessThanOrEqual(64);
     });
+  });
+})
+
+describe('timezone keyboard', () => {
+  const keyboard = (value?: string) =>
+    getMessageTemplate(Command.TimeZone, {value, lang: 'en'}).reply_markup.inline_keyboard;
+
+  test('offers every supported zone', () => {
+    const values = keyboard().flat().map((btn: any) => JSON.parse(btn.callback_data).value);
+
+    expect(values).toEqual(TIME_ZONE_OPTIONS);
+  });
+
+  test('every button carries the timezone command', () => {
+    keyboard().flat().forEach((btn: any) => {
+      expect(JSON.parse(btn.callback_data).command).toBe(Command.TimeZone);
+    });
+  });
+
+  test("keeps every button under Telegram's 64-byte callback_data limit", () => {
+    keyboard().flat().forEach((btn: any) => {
+      expect(Buffer.byteLength(btn.callback_data, 'utf8')).toBeLessThanOrEqual(64);
+    });
+  });
+
+  test('labels a zone with its city and current offset', () => {
+    const moscow = keyboard().flat()
+      .find((btn: any) => JSON.parse(btn.callback_data).value === 'Europe/Moscow');
+
+    expect(moscow.text).toBe('Moscow +03:00');
+  });
+
+  test('tells a user with no stored zone that UTC is in effect', () => {
+    expect(getMessageTemplate(Command.TimeZone, {value: undefined, lang: 'en'}).text)
+      .toContain(DEFAULT_TIME_ZONE);
+  });
+
+  test('shows the stored zone when there is one', () => {
+    expect(getMessageTemplate(Command.TimeZone, {value: 'Asia/Tokyo', lang: 'en'}).text)
+      .toContain('Asia/Tokyo');
   });
 })

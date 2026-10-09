@@ -95,6 +95,15 @@ export const getDbUserLang = async (userTg: User): Promise<Lang> => {
   return resolveLang(user?.lang || language_code);
 }
 
+// Returns the raw stored value, which is absent for every document written
+// before the field existed (§8) and for anyone who has used only the bot.
+// Callers decide the fallback; see reminderSchedule.resolveTimeZone.
+export const getDbUserTimeZone = async (userId: number): Promise<string | undefined> => {
+  const users = db.collection<UserDoc>('users');
+  const user = await users.findOne({"bio.id": userId}, {projection: {timeZone: 1}});
+  return user?.timeZone;
+}
+
 export const getDbIllPeriods = async (user: User): Promise<IllPeriod[] | undefined> => {
   const {id: userId} = user;
   const users = db.collection<UserDoc>('users');

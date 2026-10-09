@@ -18,6 +18,10 @@ export const getQuery = (user: UserDoc, command: string, data: any): UserUpdate 
     case Command.Lang: {
       return {$set: {lang: data.lang}};
     }
+
+    case Command.TimeZone: {
+      return {$set: {timeZone: data.timeZone}};
+    }
   }
   return undefined;
 }

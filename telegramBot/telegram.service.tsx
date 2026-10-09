@@ -1,7 +1,7 @@
 import {DateTime as dt} from "luxon";
 
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, createDbUser} from "./telegram.db.tsx";
+import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, getDbUserTimeZone, createDbUser} from "./telegram.db.tsx";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,
@@ -10,7 +10,7 @@ import {
   restructureUpdatesData
 } from "./helpers/main";
 import {Update, User} from "./telegram.types.js";
-import {toggleJob} from "../cron/main.tsx";
+import {toggleJob, rescheduleUserJobs} from "../cron/main.tsx";
 import {Command} from "./enums/Command";
 
 const manageTgUpdates = async (update: Update) => {
@@ -28,7 +28,8 @@ const manageTgUpdates = async (update: Update) => {
     case 'inline_button': {
       const {command, value} = JSON.parse(message);
       const lang = await getDbUserLang(userTg);
-      const nextMove = getResponseToInlineButton(command, value, lang);
+      const timeZone = await getDbUserTimeZone(userTg.id);
+      const nextMove = getResponseToInlineButton(command, value, lang, timeZone);
 
       if (nextMove.updateData) {
         await updateDbData({
@@ -36,6 +37,10 @@ const manageTgUpdates = async (update: Update) => {
           user: userTg,
           data: nextMove.updateData
         });
+      }
+      // After the update, so the jobs are rebuilt from the zone just stored.
+      if (nextMove.rescheduleJobs) {
+        await rescheduleUserJobs(userTg.id, nextMove.updateData?.timeZone);
       }
       if (nextMove.jobConfig) {
         await toggleJob({userId: userTg.id, ...nextMove.jobConfig})
@@ -67,6 +72,10 @@ const sendResponseToCommand = async (userTg: User, command: string, value?: any)
     case Command.HealthyYear: {
       const periods = await getDbIllPeriods(userTg);
       params.value = extractPeriodsFromYear(periods);
+      break;
+    }
+    case Command.TimeZone: {
+      params.value = await getDbUserTimeZone(userTg.id);
       break;
     }
     case Command.ColdEnd: {

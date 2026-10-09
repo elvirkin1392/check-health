@@ -27,7 +27,7 @@ router.post("/codeVerification", auth.optional, async function (req, res) {
 
 router.post("/telegramAuth", auth.optional, async function (req, res) {
   try {
-    const user = await loginWithTelegramWebApp(req.body.initData);
+    const user = await loginWithTelegramWebApp(req.body.initData, req.body.timeZone);
     res.json(user);
   } catch (error) {
     console.error(error)
