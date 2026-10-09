@@ -1,7 +1,11 @@
 import {DateTime as dt} from "luxon";
+import {UpdateFilter} from "mongodb";
 import {Command} from "../enums/Command";
+import {IllPeriod, UserDoc} from "../../db/templates/UserTemplate.tsx";
 
-export const getQuery = (user, command, data) => {
+export type UserUpdate = UpdateFilter<UserDoc>;
+
+export const getQuery = (user: UserDoc, command: string, data: any): UserUpdate | UserUpdate[] | undefined => {
   switch (command) {
     case Command.ColdStart: {
       return getColdStartQuery(user, command, data);
@@ -18,7 +22,7 @@ export const getQuery = (user, command, data) => {
   return undefined;
 }
 
-export const getColdStartQuery = (user, _command, data) => {
+export const getColdStartQuery = (user: UserDoc, _command: string, data: IllPeriod): UserUpdate | UserUpdate[] | undefined => {
   const periods = user.ill_periods;
   const lastPeriod = periods?.[periods.length - 1];
 
@@ -40,7 +44,7 @@ export const getColdStartQuery = (user, _command, data) => {
   return {$push: {ill_periods: data}};
 }
 
-export const getColdEndQuery = (user, _command, data) => {
+export const getColdEndQuery = (user: UserDoc, _command: string, data: {end_date: string}): UserUpdate | undefined => {
   const periods = user.ill_periods;
   const lastPeriod = periods?.[periods.length - 1];
 

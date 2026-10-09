@@ -1,7 +1,7 @@
 import {DateTime as dt} from "luxon";
 
 import {sendMessage} from "./telegram.api.js";
-import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, createDbUser} from "./telegram.db.js";
+import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, createDbUser} from "./telegram.db.tsx";
 import {
   calcPeriodBetweenDates,
   extractPeriodsFromYear,

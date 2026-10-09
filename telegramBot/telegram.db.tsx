@@ -3,10 +3,12 @@ import {db} from "../db/dbClient.js";
 import {getQuery} from "./helpers/dbQueries.tsx";
 import {UserTemplate} from "../db/templates/UserTemplate.tsx";
 import {CreateStatus} from "./enums/Statuses.tsx";
-import {resolveLang} from "./i18n/index.tsx";
+import {resolveLang, Lang} from "./i18n/index.tsx";
+import {User} from "./telegram.types.tsx";
+import {IllPeriod, UserDoc} from "../db/templates/UserTemplate.tsx";
 
-export const createDbUser = async (userTg) => {
-  const users = db.collection('users');
+export const createDbUser = async (userTg: User): Promise<CreateStatus> => {
+  const users = db.collection<UserDoc>('users');
   const currentUser = await users.findOne({"bio.username": userTg.username});
 
   try {
@@ -25,8 +27,10 @@ export const createDbUser = async (userTg) => {
   }
 }
 
-export const updateDbData = async ({user, command, data}) => {
-  const users = db.collection('users');
+type UpdateDbData = {user: User, command: string, data: Record<string, unknown>};
+
+export const updateDbData = async ({user, command, data}: UpdateDbData): Promise<void> => {
+  const users = db.collection<UserDoc>('users');
   const currentUser = await users.findOne({"bio.id": user.id});
   const query = getQuery(currentUser, command, data);
 
@@ -48,9 +52,9 @@ export const updateDbData = async ({user, command, data}) => {
     throw e;
   }
 }
-export const getDbLastIllDay = async (user) => {
+export const getDbLastIllDay = async (user: User): Promise<string | dt | undefined> => {
   const {id: userId} = user;
-  const users = db.collection('users');
+  const users = db.collection<UserDoc>('users');
   try {
     const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
     if (!periods || periods.length === 0) {
@@ -61,18 +65,18 @@ export const getDbLastIllDay = async (user) => {
     throw e;
   }
 }
-export const getDbUser = async (user) => {
+export const getDbUser = async (user: User) => {
   const {id: userId} = user;
-  const users = db.collection('users');
+  const users = db.collection<UserDoc>('users');
   try {
     return await users.findOne({"bio.id": userId});
   } catch (e) {
     throw e;
   }
 }
-export const getDbLastIllPeriod = async (user) => {
+export const getDbLastIllPeriod = async (user: User): Promise<IllPeriod | undefined> => {
   const {id: userId} = user;
-  const users = db.collection('users');
+  const users = db.collection<UserDoc>('users');
   try {
     const {ill_periods: periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
     if (!periods || periods.length === 0) {
@@ -84,16 +88,16 @@ export const getDbLastIllPeriod = async (user) => {
   }
 }
 
-export const getDbUserLang = async (userTg) => {
+export const getDbUserLang = async (userTg: User): Promise<Lang> => {
   const {id: userId, language_code} = userTg;
-  const users = db.collection('users');
+  const users = db.collection<UserDoc>('users');
   const user = await users.findOne({"bio.id": userId}, {projection: {lang: 1}});
   return resolveLang(user?.lang || language_code);
 }
 
-export const getDbIllPeriods = async (user) => {
+export const getDbIllPeriods = async (user: User): Promise<IllPeriod[] | undefined> => {
   const {id: userId} = user;
-  const users = db.collection('users');
+  const users = db.collection<UserDoc>('users');
   try {
     const {ill_periods} = await users.findOne({"bio.id": userId}, {projection: {ill_periods: 1,}});
     return ill_periods;
