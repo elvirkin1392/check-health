@@ -10,3 +10,7 @@ tsconfig.app.tsbuildinfo
 node_modules/
 .idea
 /client/dist/
+
+# Claude Code: SDD tests lock (local state)
+.claude/tests.lock
+.claude/worktrees/
