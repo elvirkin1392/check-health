@@ -1,13 +1,16 @@
-import generateToken from './token.utils.js';
-import HttpException from '../../models/http-exception.model.js';
+import generateToken from './token.utils.tsx';
+import HttpException from '../../models/http-exception.model.tsx';
 import {sendResponseToCommand} from '../../telegramBot/telegram.service.tsx';
-import {getUserBio, getUserLoginCode, updateUser, updateUserLoginCode, incrementLoginCodeAttempts, getOrCreateUserByTelegramId} from "./auth.db.js";
+import {getUserBio, getUserLoginCode, updateUser, updateUserLoginCode, incrementLoginCodeAttempts, getOrCreateUserByTelegramId} from "./auth.db.tsx";
 import {Command} from "../../telegramBot/enums/Command.tsx";
 import {rescheduleUserJobs} from "../../cron/main.tsx";
 import {verifyTelegramInitData} from "./telegramInitData.util.tsx";
 import {isValidTimeZone} from "../../telegramBot/helpers/reminderSchedule.tsx";
+import {User} from "../../telegramBot/telegram.types.tsx";
 
-export const login = async (username) => {
+type LoginResult = {url: string} | {status: number, text: string} | Error;
+
+export const login = async (username: string): Promise<LoginResult> => {
   if (!username) {
     throw new HttpException(422, "username can't be blank");
   }
@@ -18,7 +21,7 @@ export const login = async (username) => {
   }
 
   try {
-    const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4, 0);
+    const generatedCode = `${Math.floor(Math.random() * 10000)}`.padStart(4, '0');
     await sendResponseToCommand(userData.bio, Command.Login, generatedCode);
     await updateUserLoginCode(userData._id, generatedCode);
 
@@ -30,7 +33,9 @@ export const login = async (username) => {
 
 const MAX_LOGIN_CODE_ATTEMPTS = 5;
 
-export const codeVerification = async (username, code) => {
+type Session = {bio: User, accessToken: string};
+
+export const codeVerification = async (username: string, code: string): Promise<Session | Error> => {
   const result = await getUserLoginCode(username);
 
   if (!result || !result.loginCode) {
@@ -62,7 +67,7 @@ export const codeVerification = async (username, code) => {
   return new Error('Wrong code');
 }
 
-export const loginWithTelegramWebApp = async (initData, timeZone) => {
+export const loginWithTelegramWebApp = async (initData: string, timeZone?: string): Promise<Session> => {
   const telegramUser = verifyTelegramInitData(initData, process.env.CHECK_HEALTH_TELEGRAM_BOT_TOKEN);
   if (!telegramUser) {
     throw new HttpException(401, "Invalid Telegram Web App data");

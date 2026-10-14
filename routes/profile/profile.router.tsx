@@ -1,9 +1,9 @@
 import {Router} from "express";
-import {ProfileDb} from "./profile.db.js";
-import {db} from "../../db/dbClient.js";
-import auth from "../auth/auth.js";
-import {ProfileController} from "./profile.controller.js";
-import {ProfileService} from "./profile.service.js";
+import {ProfileDb} from "./profile.db.tsx";
+import {db} from "../../db/dbClient.tsx";
+import auth from "../auth/auth.tsx";
+import {ProfileController} from "./profile.controller.tsx";
+import {ProfileService} from "./profile.service.tsx";
 
 export const profileRouter = Router();
 
