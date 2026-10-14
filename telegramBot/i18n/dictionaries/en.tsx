@@ -19,4 +19,7 @@ export const en = {
   check_health_still_bad: "still bad",
   lang_prompt: "Choose your language",
   lang_saved: "Language set to English",
+  timezone_prompt: "Your daily reminder arrives at 12:00 in your time zone.\nRight now that is {{value}} — choose another one if it's wrong:",
+  timezone_saved: "Time zone set to {{value}}. The daily reminder now arrives at 12:00 there.",
+  timezone_invalid: "I don't know that time zone. Please pick one from the buttons.",
 }

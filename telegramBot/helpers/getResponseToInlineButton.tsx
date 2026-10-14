@@ -3,14 +3,17 @@ import {getMessageTemplate, decodeCalendarTarget} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, resolveLang, Lang} from "../i18n/index.tsx";
+import {getReminderSchedule, isValidTimeZone} from "./reminderSchedule";
 
 type Response = {
   closeSession?: { text: string, reply_markup?: any },
   updateData?: any,
   jobConfig?: any,
+  // Set when the change invalidates the schedule of an already-running job.
+  rescheduleJobs?: boolean,
 }
 
-export const getResponseToInlineButton = (commandKey: string, value?: any, lang: Lang = 'en'): Response => {
+export const getResponseToInlineButton = (commandKey: string, value?: any, lang: Lang = 'en', timeZone?: string): Response => {
   switch (commandKey) {
     case MessageType.Calendar: {
       const {t, y, m} = value;
@@ -21,6 +24,16 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
       return {
         closeSession: {text: translate('lang_saved', newLang)},
         updateData: {lang: newLang}
+      };
+    }
+    case Command.TimeZone: {
+      if (!isValidTimeZone(value)) {
+        return {closeSession: {text: translate('timezone_invalid', lang)}};
+      }
+      return {
+        closeSession: {text: translate('timezone_saved', lang, {value})},
+        updateData: {timeZone: value},
+        rescheduleJobs: true
       };
     }
     case Command.ColdStart: {
@@ -36,7 +49,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
         closeSession: {text: translate('calendar_updated', lang)},
         updateData: {start_date: value, end_date: null},
         jobConfig: {
-          cronTime: '10 * * * * *', //for testing every 10 sec todo change to every day
+          ...getReminderSchedule(timeZone),
           messageTemplate: getMessageTemplate(MessageType.CheckHealth, {lang}),
           type: MessageType.CheckHealth
         }

@@ -24,6 +24,9 @@ export const codeVerification = async (data: {username: string, code: string}) =
 }
 
 export const telegramLogin = async (initData: string) => {
-  const response = await axios.post('/api/telegramAuth', {initData});
+  // The bot cannot learn the zone from Telegram updates, so the Mini App is the
+  // one place that knows it. Sent on every login so a move is picked up.
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const response = await axios.post('/api/telegramAuth', {initData, timeZone});
   return applyLoginResult(response.data);
 }

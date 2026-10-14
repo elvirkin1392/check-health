@@ -5,5 +5,6 @@ export enum Command {
   HealthyDays = "healthy_days",
   HealthyYear = "healthy_year",
   Lang = "lang",
+  TimeZone = "timezone",
   Login = "login"
 }
