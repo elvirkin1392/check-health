@@ -10,7 +10,10 @@ tgAxios.interceptors.response.use(function (response) {
   return Promise.reject(error);
 })
 
-export const sendMessage = (id, options) => {
+// What getMessageTemplate builds: the text plus an optional inline keyboard.
+export type MessageOptions = {text: string, reply_markup?: unknown};
+
+export const sendMessage = (id: number, options: MessageOptions) => {
   return tgAxios.post(`/sendMessage`, {chat_id: id, ...options}).then(response => response.data);
 }
 

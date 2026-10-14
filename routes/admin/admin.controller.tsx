@@ -1,12 +1,12 @@
-import {Router} from 'express';
+import {Router, Request, Response} from 'express';
 
-import auth from '../auth/auth.js';
+import auth from '../auth/auth.tsx';
 import {manageTgUpdates} from '../../telegramBot/telegram.service.tsx';
-import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.js";
+import {setWebhook, unsetWebhook} from "../../telegramBot/telegram.api.tsx";
 
 const router = Router();
 
-router.get('/switchOnWebhook', auth.required, async function (req, res, next) {
+router.get('/switchOnWebhook', auth.required, async function (_req: Request, res: Response) {
   try {
     const result = await setWebhook()
     return res.json(result);
@@ -15,7 +15,7 @@ router.get('/switchOnWebhook', auth.required, async function (req, res, next) {
   }
 })
 
-router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
+router.get('/switchOffWebhook', auth.required, async function (_req: Request, res: Response) {
   try {
     const result = await unsetWebhook()
     return res.json(result);
@@ -25,7 +25,7 @@ router.get('/switchOffWebhook', auth.required, async function (req, res, next) {
 })
 
 //api for TG, get updates
-router.post('/listenWebHook', auth.optional, async function (req, res) {
+router.post('/listenWebHook', auth.optional, async function (req: Request, res: Response) {
   const secretToken = req.get('X-Telegram-Bot-Api-Secret-Token');
   if (secretToken !== process.env.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET) {
     return res.sendStatus(401);

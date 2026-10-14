@@ -2,7 +2,7 @@ import cors from 'cors';
 import path from 'node:path';
 import express from 'express';
 import {fileURLToPath} from 'node:url';
-import routes from './routes/routes.js';
+import routes from './routes/routes.tsx';
 import {restoreJobs} from './cron/main.tsx';
 
 const __filename = fileURLToPath(import.meta.url);

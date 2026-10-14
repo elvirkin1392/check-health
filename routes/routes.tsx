@@ -1,7 +1,7 @@
 import {Router} from 'express';
-import authController from './auth/auth.controller.js';
-import {profileRouter} from "./profile/profile.router.js";
-import adminController from './admin/admin.controller.js';
+import authController from './auth/auth.controller.tsx';
+import {profileRouter} from "./profile/profile.router.tsx";
+import adminController from './admin/admin.controller.tsx';
 
 const api = Router()
   .use(profileRouter)

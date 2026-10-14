@@ -8,6 +8,9 @@ export type UserDoc = {
   ill_periods: IllPeriod[],
   woman_days: unknown[],
   loginCode: string,
+  // Written by the login-code flow; absent on documents that never used it (§8).
+  loginCodeExpiresAt?: number | null,
+  loginCodeAttempts?: number,
   lang?: string,
   // Optional by §8: documents written before the daily reminder had a time zone
   // carry no such field, and the reminder falls back to UTC for them.

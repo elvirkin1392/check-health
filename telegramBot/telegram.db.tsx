@@ -1,5 +1,5 @@
 import {DateTime as dt} from "luxon";
-import {db} from "../db/dbClient.js";
+import {db} from "../db/dbClient.tsx";
 import {getQuery} from "./helpers/dbQueries.tsx";
 import {UserTemplate} from "../db/templates/UserTemplate.tsx";
 import {CreateStatus} from "./enums/Statuses.tsx";

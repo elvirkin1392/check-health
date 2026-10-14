@@ -1,9 +1,9 @@
 import {CronJob} from 'cron';
 
-import {sendMessage} from "../telegramBot/telegram.api";
+import {sendMessage} from "../telegramBot/telegram.api.tsx";
 import {getDbUserTimeZone} from "../telegramBot/telegram.db.tsx";
 import {getReminderSchedule, needsReschedule} from "../telegramBot/helpers/reminderSchedule";
-import {db} from "../db/dbClient";
+import {db} from "../db/dbClient.tsx";
 
 type StopConfig = {shouldStop: true, userId: number, type: string};
 type StartConfig = {shouldStop?: false, userId: number, type: string, messageTemplate: any, cronTime: string, timeZone: string};

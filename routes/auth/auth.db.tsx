@@ -1,10 +1,16 @@
-import {db} from "../../db/dbClient.js";
-import {UserTemplate} from "../../db/templates/UserTemplate.tsx";
+import {ObjectId, WithId} from "mongodb";
+import {db} from "../../db/dbClient.tsx";
+import {UserDoc, UserTemplate} from "../../db/templates/UserTemplate.tsx";
+import {User} from "../../telegramBot/telegram.types.tsx";
 
-export const getUserLoginCode = async (username) => {
-  const users = db.collection('users');
+export const getUserLoginCode = async (username: string): Promise<WithId<UserDoc> | null> => {
+  const users = db.collection<UserDoc>('users');
   try {
-    const result = await users.findOne({"bio.username": username}, {loginCode: 1, bio: 1})
+    // Returns the whole document on purpose. The second argument used to read
+    // {loginCode: 1, bio: 1}, which is not a projection — mongo ignored it — so the
+    // caller has always received every field. It needs loginCodeExpiresAt and
+    // loginCodeAttempts, which that projection would have dropped.
+    const result = await users.findOne({"bio.username": username});
     return result;
   } catch (e) {
     console.error(e.message);
@@ -12,10 +18,10 @@ export const getUserLoginCode = async (username) => {
   }
 };
 
-export const getUserBio = async (username) => {
+export const getUserBio = async (username: string): Promise<WithId<UserDoc> | null> => {
   try {
-    const users = db.collection('users');
-    const result = await users.findOne({"bio.username": username}, {projection: {bio: 1}})
+    const users = db.collection<UserDoc>('users');
+    const result = await users.findOne({"bio.username": username}, {projection: {bio: 1}});
     return result;
   } catch (e) {
     console.error(e.message);
@@ -23,15 +29,15 @@ export const getUserBio = async (username) => {
   }
 };
 
-export const updateUser = async (userId, value) => {
-  const users = db.collection('users');
+export const updateUser = async (userId: ObjectId, value: Partial<UserDoc>) => {
+  const users = db.collection<UserDoc>('users');
   const result = await users.updateOne({_id: userId}, {$set: value});
 
   return result;
 }
 
-export const updateUserLoginCode = async (id, code) => {
-  const users = db.collection('users');
+export const updateUserLoginCode = async (id: ObjectId, code: string) => {
+  const users = db.collection<UserDoc>('users');
   const result = await users.updateOne({_id: id}, {$set: {
     loginCode: code,
     loginCodeExpiresAt: code ? Date.now() + 5 * 60 * 1000 : null,
@@ -41,8 +47,8 @@ export const updateUserLoginCode = async (id, code) => {
   return result;
 }
 
-export const incrementLoginCodeAttempts = async (id) => {
-  const users = db.collection('users');
+export const incrementLoginCodeAttempts = async (id: ObjectId) => {
+  const users = db.collection<UserDoc>('users');
   return await users.findOneAndUpdate(
     {_id: id},
     {$inc: {loginCodeAttempts: 1}},
@@ -50,8 +56,8 @@ export const incrementLoginCodeAttempts = async (id) => {
   );
 }
 
-export const getOrCreateUserByTelegramId = async (bio) => {
-  const users = db.collection('users');
+export const getOrCreateUserByTelegramId = async (bio: User): Promise<UserDoc & {_id: ObjectId}> => {
+  const users = db.collection<UserDoc>('users');
   const existing = await users.findOne({"bio.id": bio.id});
   if (existing) {
     return existing;

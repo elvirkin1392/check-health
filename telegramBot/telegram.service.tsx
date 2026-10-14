@@ -1,6 +1,6 @@
 import {DateTime as dt} from "luxon";
 
-import {sendMessage} from "./telegram.api.js";
+import {sendMessage} from "./telegram.api.tsx";
 import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, getDbUserTimeZone, createDbUser} from "./telegram.db.tsx";
 import {
   calcPeriodBetweenDates,
@@ -9,7 +9,7 @@ import {
   getMessageTemplate,
   restructureUpdatesData
 } from "./helpers/main";
-import {Update, User} from "./telegram.types.js";
+import {Update, User} from "./telegram.types.tsx";
 import {toggleJob, rescheduleUserJobs} from "../cron/main.tsx";
 import {Command} from "./enums/Command";
 
