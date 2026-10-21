@@ -29,11 +29,3 @@ export const unsetWebhook = () => {
     url: ''
   }).then(response => response.data);
 }
-
-export const getWebhookInfo = () => {
-  return tgAxios.get(`/getWebhookInfo`)
-    .then((response) => {
-      console.log('getWebhookInfo', response.data);
-      return response.data;
-    });
-}
