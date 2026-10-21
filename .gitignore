@@ -25,3 +25,4 @@ cloud-sql-proxy
 
 # Written by the Cloud Run deploy workflow from GitHub secrets
 env.yaml
+*.tsbuildinfo
