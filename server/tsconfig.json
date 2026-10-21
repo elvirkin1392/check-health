@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
@@ -22,5 +22,5 @@
     "baseUrl": "."
   },
 //  "include": ["src/**/*", "__tests__/**/*"],
-  "exclude": ["node_modules", "build", "client", "server.tsx"]
+  "exclude": ["node_modules", "build"]
 }

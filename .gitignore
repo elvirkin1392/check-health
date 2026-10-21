@@ -10,3 +10,5 @@ tsconfig.app.tsbuildinfo
 node_modules/
 .idea
 /client/dist/
+cloud-sql-proxy
+env.yaml

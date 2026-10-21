@@ -17,16 +17,14 @@ jobs:
           node-version: 24
           cache: npm
 
+      # Workspaces share one lockfile at the root; this installs both.
       - run: npm ci
-      - run: npm run check-ts
-      - run: npm test
+      - run: npm run check-ts --workspace @check-health/server
+      - run: npm test --workspace @check-health/server
 
   client:
     name: Client (lint + typecheck + tests + build)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: client
     steps:
       - uses: actions/checkout@v7
 
@@ -34,10 +32,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: client/package-lock.json
 
       - run: npm ci
-      - run: npm run lint
-      - run: npm run check-ts
-      - run: npm test
-      - run: npm run build
+      - run: npm run lint --workspace @check-health/client
+      - run: npm run check-ts --workspace @check-health/client
+      - run: npm test --workspace @check-health/client
+      - run: npm run build --workspace @check-health/client

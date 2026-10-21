@@ -33,6 +33,9 @@ jobs:
           CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET: "${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}"
           EOF
 
+      # --source . picks up the Dockerfile at the repository root, which builds
+      # the server workspace together with shared/. .gcloudignore keeps the
+      # client, the docs and env.yaml out of the upload.
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy check-health \
