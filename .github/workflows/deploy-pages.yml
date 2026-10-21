@@ -30,9 +30,11 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: client/package-lock.json
 
+      # npm workspaces keep a single lockfile at the repository root, so the
+      # install has to run there even though everything else runs in client/.
       - run: npm ci
+        working-directory: .
 
       - name: Verify API host is configured
         run: |

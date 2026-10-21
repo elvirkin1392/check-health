@@ -18,19 +18,45 @@ Here is a working live [demo](https://elvirkin1392.github.io/check-health/)
 - https://console.cloud.google.com/
 
 
+## Layout
+
+npm workspaces, one lockfile at the root:
+
+```
+server/   Express API, Telegram bot, cron jobs
+client/   React Mini App (Vite)
+shared/   the little both sides agree on — supported languages
+specs/    specifications, one folder per feature
+```
+
+### Install
+
+Once, from the repository root — this installs both workspaces:
+
+```
+npm install
+```
+
 ### Run server
 ```
-cp .env.template .env    # only first time, fill created file with relevant variables
-npm install              # only first time or after dependencies updates
-npm run dev
+cp server/.env.template server/.env   # only first time, fill in the variables
+npm run dev:server
 ```
 
 ### Run web
 ```
-cd client/
-cp .env.template .env    # only first time, fill created file with relevant variables
-npm install              # only first time or after dependencies updates
-npm run dev
+cp client/.env.template client/.env   # only first time, fill in the variables
+npm run dev:client
+```
+
+### Checks
+
+From the root, across both workspaces:
+
+```
+npm run check-ts
+npm test
+npm run lint
 ```
 
 ## Stack
@@ -42,7 +68,7 @@ Every push to `master` runs three GitHub Actions pipelines automatically:
 
 - **CI** — typecheck, lint, tests, build (client and server)
 - **Deploy client to GitHub Pages** — builds `client/` and publishes it (skipped for server-only changes)
-- **Deploy server to Cloud Run** — deploys the backend via `gcloud run deploy --source .` (skipped for client-only changes)
+- **Deploy server to Cloud Run** — deploys the backend via `gcloud run deploy --source .`, which builds the root `Dockerfile` (skipped for client-only changes)
 
 No manual `npm run deploy` needed for normal changes.
 

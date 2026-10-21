@@ -1,0 +1,14 @@
+.git
+.github
+.claude
+node_modules
+**/node_modules
+client/dist
+coverage
+specs
+cloud-sql-proxy
+architecture.svg
+README.md
+**/.env
+**/.DS_Store
+temp

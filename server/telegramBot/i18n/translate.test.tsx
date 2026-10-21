@@ -1,4 +1,4 @@
-import {translate, resolveLang} from './translate';
+import {translate, resolveLang} from './index.tsx';
 
 describe('translate', () => {
   test('returns the string for the given language', () => {

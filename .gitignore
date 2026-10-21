@@ -14,6 +14,14 @@ node_modules/
 # Claude Code: SDD tests lock (local state)
 .claude/tests.lock
 .claude/worktrees/
+
+# Generated reports and local noise
 coverage/
 .DS_Store
 temp/
+
+# A 31 MB macOS x86_64 binary — useless on Cloud Run's Linux containers
+cloud-sql-proxy
+
+# Written by the Cloud Run deploy workflow from GitHub secrets
+env.yaml
