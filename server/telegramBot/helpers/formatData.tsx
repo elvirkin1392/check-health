@@ -1,6 +1,8 @@
 import {DateTime as dt} from "luxon";
 
-export const extractPeriodsFromYear = (periods) => {
+// Второй аргумент — сегодняшний день пользователя (спецификация 002, FR-6, FR-7).
+// Пока не используется: тело перейдёт на него в фазе реализации.
+export const extractPeriodsFromYear = (periods, _today?: string) => {
   const dayYearAgo = dt.now().minus({year: 1});
   let result = 365;
 

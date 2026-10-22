@@ -3,6 +3,7 @@ import {Command} from "../enums/Command.tsx";
 import {MessageType} from "../enums/MessageType.tsx";
 import {CreateStatus} from "../enums/Statuses.tsx";
 import {DEFAULT_TIME_ZONE, TIME_ZONE_OPTIONS} from "./reminderSchedule.tsx";
+import {Settings} from "luxon";
 
 describe('getMessageTemplate', () => {
   test('getMessageTemplate', () => {
@@ -105,3 +106,98 @@ describe('timezone keyboard', () => {
       .toContain('Asia/Tokyo');
   });
 })
+
+// --- Спецификация 002: день болезни считается по календарю пользователя ---
+//
+// Сервер на Cloud Run работает в UTC, а машина разработчика может стоять в UTC+5 —
+// в том же поясе, что и Asia/Tashkent из критериев. Поэтому зона прибивается явно:
+// иначе багованный код прошёл бы локально и упал в CI.
+const SERVER_ZONE = 'UTC';
+
+const originalNow = Settings.now;
+const originalZone = Settings.defaultZone;
+
+const freezeAt = (millis: number) => {
+  Settings.now = () => millis;
+  Settings.defaultZone = SERVER_ZONE;
+};
+
+afterEach(() => {
+  Settings.now = originalNow;
+  Settings.defaultZone = originalZone;
+});
+
+// По UTC ещё 9 октября 21:00, в Asia/Tashkent уже 10 октября 02:00.
+const EVENING_IN_UTC_PLUS_5 = Date.UTC(2026, 9, 9, 21, 0, 0);
+// По UTC уже 10 октября 02:00, в America/Los_Angeles ещё 9 октября 19:00.
+const NIGHT_WHEN_UTC_IS_AHEAD = Date.UTC(2026, 9, 10, 2, 0, 0);
+
+const quickButtons = (command: string, timeZone: string) =>
+  getMessageTemplate(command, {lang: 'en', timeZone}).reply_markup.inline_keyboard;
+
+// Даты, которые в календаре можно выбрать: у них callback_data несёт саму дату,
+// а у недоступных дней — навигацию по месяцу.
+const pickableDates = (target: string, params: any): string[] =>
+  getMessageTemplate(MessageType.Calendar, {target, lang: 'en', ...params})
+    .reply_markup.inline_keyboard
+    .slice(2)
+    .flat()
+    .filter((btn: any) => JSON.parse(btn.callback_data).command === target)
+    .map((btn: any) => JSON.parse(btn.callback_data).value);
+
+describe('002: даты кнопок в поясе пользователя', () => {
+  test('AC-1: «первый день» записывает сегодня пользователя, а не сервера', () => {
+    freezeAt(EVENING_IN_UTC_PLUS_5);
+    const [firstDay] = quickButtons(Command.ColdStart, 'Asia/Tashkent')[0];
+
+    expect(JSON.parse(firstDay.callback_data).value).toBe('2026-10-10');
+  });
+
+  test('AC-2: «со вчера» записывает день, предшествующий сегодня пользователя', () => {
+    freezeAt(EVENING_IN_UTC_PLUS_5);
+    const [, yesterday] = quickButtons(Command.ColdStart, 'Asia/Tashkent')[0];
+
+    expect(JSON.parse(yesterday.callback_data).value).toBe('2026-10-09');
+  });
+
+  test('AC-3: «сегодня» при закрытии болезни записывает сегодня пользователя', () => {
+    freezeAt(EVENING_IN_UTC_PLUS_5);
+    const [today] = quickButtons(Command.ColdEnd, 'Asia/Tashkent')[0];
+
+    expect(JSON.parse(today.callback_data).value).toBe('2026-10-10');
+  });
+
+  test('AC-6: календарь открывается на месяце пользователя', () => {
+    // 31 октября 21:00 UTC — в Ташкенте уже 1 ноября.
+    freezeAt(Date.UTC(2026, 9, 31, 21, 0, 0));
+    const [pickADate] = quickButtons(Command.ColdStart, 'Asia/Tashkent')[1];
+
+    expect(JSON.parse(pickADate.callback_data).value).toEqual({t: 's', y: 2026, m: 11});
+  });
+});
+
+describe('002: гейт будущих дней в календаре', () => {
+  test('AC-4: сегодня пользователя выбираемо, завтра — нет', () => {
+    freezeAt(EVENING_IN_UTC_PLUS_5);
+    const dates = pickableDates(Command.ColdStart, {year: 2026, month: 10, timeZone: 'Asia/Tashkent'});
+
+    expect(dates).toContain('2026-10-10');
+    expect(dates).not.toContain('2026-10-11');
+  });
+
+  test('AC-5: западнее UTC день, ещё не наступивший у пользователя, недоступен', () => {
+    freezeAt(NIGHT_WHEN_UTC_IS_AHEAD);
+    const dates = pickableDates(Command.ColdStart, {year: 2026, month: 10, timeZone: 'America/Los_Angeles'});
+
+    expect(dates).toContain('2026-10-09');
+    expect(dates).not.toContain('2026-10-10');
+  });
+
+  test('без пояса календарь ведёт себя как раньше — по UTC', () => {
+    freezeAt(EVENING_IN_UTC_PLUS_5);
+    const dates = pickableDates(Command.ColdStart, {year: 2026, month: 10, timeZone: undefined});
+
+    expect(dates).toContain('2026-10-09');
+    expect(dates).not.toContain('2026-10-10');
+  });
+});
