@@ -1,4 +1,3 @@
-import {DateTime as dt} from "luxon";
 import {db} from "../db/dbClient.tsx";
 import {getQuery} from "./helpers/dbQueries.tsx";
 import {UserTemplate} from "../db/templates/UserTemplate.tsx";
@@ -52,7 +51,10 @@ export const updateDbData = async ({user, command, data}: UpdateDbData): Promise
     throw e;
   }
 }
-export const getDbLastIllDay = async (user: User): Promise<string | dt | undefined> => {
+// `today` — сегодняшний день пользователя, его подставляет вызывающий (§4):
+// слой базы не должен знать, в каком поясе живёт человек. Раньше здесь стоял
+// `dt.now()`, из-за чего функция возвращала то строку, то `DateTime`.
+export const getDbLastIllDay = async (user: User, today: string): Promise<string | undefined> => {
   const {id: userId} = user;
   const users = db.collection<UserDoc>('users');
   try {
@@ -60,7 +62,8 @@ export const getDbLastIllDay = async (user: User): Promise<string | dt | undefin
     if (!periods || periods.length === 0) {
       return undefined;
     }
-    return periods[periods.length - 1].end_date || dt.now();
+    // Период ещё не закрыт — значит последний больной день сегодняшний.
+    return periods[periods.length - 1].end_date || today;
   } catch (e) {
     throw e;
   }

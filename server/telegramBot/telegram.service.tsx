@@ -1,5 +1,3 @@
-import {DateTime as dt} from "luxon";
-
 import {sendMessage} from "./telegram.api.tsx";
 import {updateDbData, getDbLastIllDay, getDbIllPeriods, getDbLastIllPeriod, getDbUserLang, getDbUserTimeZone, createDbUser} from "./telegram.db.tsx";
 import {
@@ -12,6 +10,7 @@ import {
 import {Update, User} from "./telegram.types.tsx";
 import {toggleJob, rescheduleUserJobs} from "../cron/main.tsx";
 import {Command} from "./enums/Command";
+import {userToday} from "./helpers/userDay.tsx";
 
 const manageTgUpdates = async (update: Update) => {
   const info = restructureUpdatesData(update);
@@ -55,7 +54,10 @@ const manageTgUpdates = async (update: Update) => {
 
 const sendResponseToCommand = async (userTg: User, command: string, value?: any) => {
   const lang = await getDbUserLang(userTg);
-  let params:any = {value, lang};
+  const timeZone = await getDbUserTimeZone(userTg.id);
+  // Все даты этой команды считаются от сегодняшнего дня пользователя, а не сервера (§9).
+  const today = userToday(timeZone);
+  let params:any = {value, lang, timeZone};
   const commandKey = command.replace('/', '');
 
   switch (commandKey) {
@@ -65,13 +67,13 @@ const sendResponseToCommand = async (userTg: User, command: string, value?: any)
       break;
     }
     case Command.HealthyDays: {
-      const lastIllDay = await getDbLastIllDay(userTg);
-      params.value = lastIllDay ? calcPeriodBetweenDates(lastIllDay, dt.now()).days : undefined;
+      const lastIllDay = await getDbLastIllDay(userTg, today);
+      params.value = lastIllDay ? calcPeriodBetweenDates(lastIllDay, today).days : undefined;
       break;
     }
     case Command.HealthyYear: {
       const periods = await getDbIllPeriods(userTg);
-      params.value = extractPeriodsFromYear(periods);
+      params.value = extractPeriodsFromYear(periods, today);
       break;
     }
     case Command.TimeZone: {

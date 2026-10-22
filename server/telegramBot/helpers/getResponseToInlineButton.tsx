@@ -1,9 +1,9 @@
-import {DateTime as dt} from "luxon";
 import {getMessageTemplate, decodeCalendarTarget} from "./getMessageTemplate";
 import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, resolveLang, Lang} from "../i18n/index.tsx";
 import {getReminderSchedule, isValidTimeZone} from "./reminderSchedule";
+import {userTodayMonth} from "./userDay";
 
 type Response = {
   closeSession?: { text: string, reply_markup?: any },
@@ -17,7 +17,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
   switch (commandKey) {
     case MessageType.Calendar: {
       const {t, y, m} = value;
-      return {closeSession: getMessageTemplate(MessageType.Calendar, {target: decodeCalendarTarget(t), year: y, month: m, lang})};
+      return {closeSession: getMessageTemplate(MessageType.Calendar, {target: decodeCalendarTarget(t), year: y, month: m, lang, timeZone})};
     }
     case Command.Lang: {
       const newLang = resolveLang(value);
@@ -38,7 +38,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
     }
     case Command.ColdStart: {
       if (!value) {
-        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: dt.now().year, month: dt.now().month, lang})};
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, ...userTodayMonth(timeZone), lang, timeZone})};
       }
       //todo move validation
       // if (dt.fromISO(value) > dt.now()) {
@@ -63,7 +63,7 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
       //TODO validation, if start_date is today, then end_date can't be earlier
 
       if (!value) {
-        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdEnd, year: dt.now().year, month: dt.now().month, lang})};
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.ColdEnd, ...userTodayMonth(timeZone), lang, timeZone})};
       }
 
       return {

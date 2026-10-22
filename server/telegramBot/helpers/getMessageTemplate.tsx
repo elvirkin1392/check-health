@@ -4,6 +4,7 @@ import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, Lang} from "../i18n/index.tsx";
 import {TIME_ZONE_OPTIONS, resolveTimeZone} from "./reminderSchedule";
+import {userToday, userYesterday, userTodayMonth} from "./userDay";
 
 export const getMessageTemplate = (command: string, params?: any) => {
   const commandKey = command.replace('/', '');
@@ -17,7 +18,7 @@ const getWeekdayLabels = (lang: Lang) => {
   return Array.from({length: 7}, (_, i) => monday.plus({days: i}).toFormat('ccc'));
 }
 
-type CalendarParams = {target: string, year: number, month: number, lang: Lang};
+type CalendarParams = {target: string, year: number, month: number, lang: Lang, timeZone?: string};
 
 // Telegram caps callback_data at 64 bytes, so navigation buttons carry a
 // short target code instead of the full command string.
@@ -30,9 +31,11 @@ const navButton = (text: string, {target, year, month}: Omit<CalendarParams, 'la
   callback_data: JSON.stringify({command: MessageType.Calendar, value: {t: CALENDAR_TARGET_CODES[target] ?? target, y: year, m: month}})
 });
 
-const buildCalendar = ({target, year, month, lang}: CalendarParams) => {
+const buildCalendar = ({target, year, month, lang, timeZone}: CalendarParams) => {
   const first = dt.fromObject({year, month, day: 1}).setLocale(lang);
-  const today = dt.now().startOf('day');
+  // Сегодня у пользователя, а не на сервере: иначе человек восточнее UTC
+  // часть суток не может выбрать день, в котором живёт (§9).
+  const today = userToday(timeZone);
   const prev = month === 1 ? {target, year: year - 1, month: 12} : {target, year, month: month - 1};
   const next = month === 12 ? {target, year: year + 1, month: 1} : {target, year, month: month + 1};
 
@@ -43,11 +46,11 @@ const buildCalendar = ({target, year, month, lang}: CalendarParams) => {
 
   let week: any[] = new Array(first.weekday - 1).fill(navButton(' ', {target, year, month}));
   for (let day = 1; day <= first.daysInMonth; day++) {
-    const date = dt.fromObject({year, month, day});
+    const date = dt.fromObject({year, month, day}).toISODate();
     week.push(
       date > today
         ? navButton('·', {target, year, month})
-        : {text: String(day), callback_data: JSON.stringify({command: target, value: date.toISODate()})}
+        : {text: String(day), callback_data: JSON.stringify({command: target, value: date})}
     );
     if (week.length === 7) {
       rows.push(week);
@@ -105,7 +108,7 @@ const MessageTemplates = {
         one_time_keyboard: true
       }
     }},
-  [Command.ColdStart]: ({lang}) => {
+  [Command.ColdStart]: ({lang, timeZone}) => {
     return {
       text: translate('cold_start_question', lang),
       reply_markup: {
@@ -113,18 +116,18 @@ const MessageTemplates = {
           [{text: translate('cold_start_first_day', lang),
               callback_data: JSON.stringify({
                 command: Command.ColdStart,
-                value: dt.now().toISODate()
+                value: userToday(timeZone)
               })},
             {text: translate('cold_start_yesterday', lang), callback_data: JSON.stringify({
                 command: Command.ColdStart,
-                value: dt.now().minus({day: 1}).toISODate()
+                value: userYesterday(timeZone)
               })}],
-          [navButton(translate('pick_a_date', lang), {target: Command.ColdStart, year: dt.now().year, month: dt.now().month})]
+          [navButton(translate('pick_a_date', lang), {target: Command.ColdStart, ...userTodayMonth(timeZone)})]
         ],
         one_time_keyboard: true
       }
     }},
-  [Command.ColdEnd]: ({lang}) => {
+  [Command.ColdEnd]: ({lang, timeZone}) => {
     return {
       text: translate('cold_end_question', lang),
       reply_markup: {
@@ -133,10 +136,10 @@ const MessageTemplates = {
             {text: translate('cold_end_today', lang),
               callback_data: JSON.stringify({
                 command: Command.ColdEnd,
-                value: dt.now().toISODate()
+                value: userToday(timeZone)
               })}
           ],
-          [navButton(translate('pick_a_date', lang), {target: Command.ColdEnd, year: dt.now().year, month: dt.now().month})]
+          [navButton(translate('pick_a_date', lang), {target: Command.ColdEnd, ...userTodayMonth(timeZone)})]
         ],
         one_time_keyboard: true
       }

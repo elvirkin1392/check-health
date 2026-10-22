@@ -26,23 +26,23 @@
 
 ## Фаза 2 — Реализация (`/sdd-implement`)
 
-- [ ] T020 Создать `userDay.tsx`: `userToday`, `userYesterday`, `userTodayMonth`
+- [x] T020 Создать `userDay.tsx`: `userToday`, `userYesterday`, `userTodayMonth`
       на `resolveTimeZone` из `reminderSchedule` (FR-1, FR-2, FR-4, FR-8)
-- [ ] T021 `calcPeriodBetweenDates` принимает только календарные строки; снять приём `DateTime` (FR-9, §6)
-- [ ] T022 `extractPeriodsFromYear` принимает день пользователя вторым аргументом,
+- [x] T021 `calcPeriodBetweenDates` принимает только календарные строки; снять приём `DateTime` (FR-9, §6)
+- [x] T022 `extractPeriodsFromYear` принимает день пользователя вторым аргументом,
       `dt.now()` внутри убрать (FR-6, FR-7)
-- [ ] T023 `getDbLastIllDay` принимает `today` аргументом, возвращает `string | undefined` —
+- [x] T023 `getDbLastIllDay` принимает `today` аргументом, возвращает `string | undefined` —
       убирает двойной тип и `dt.now()` из слоя базы (FR-7, §4, §6)
-- [ ] T024 `getMessageTemplate`: кнопки «первый день», «со вчера», «сегодня» — на `userDay` (FR-1, FR-2)
-- [ ] T025 `buildCalendar`: гейт будущих дней и начальный месяц — на `userDay` (FR-3, FR-4)
-- [ ] T026 `getResponseToInlineButton`: передавать пояс в шаблон календаря (FR-3, FR-4)
-- [ ] T027 `telegram.service.tsx`: читать пояс в `sendResponseToCommand`, передавать `timeZone`
+- [x] T024 `getMessageTemplate`: кнопки «первый день», «со вчера», «сегодня» — на `userDay` (FR-1, FR-2)
+- [x] T025 `buildCalendar`: гейт будущих дней и начальный месяц — на `userDay` (FR-3, FR-4)
+- [x] T026 `getResponseToInlineButton`: передавать пояс в шаблон календаря (FR-3, FR-4)
+- [x] T027 `telegram.service.tsx`: читать пояс в `sendResponseToCommand`, передавать `timeZone`
       в `params` и день — в расчёты (FR-5, FR-6, FR-7)
 
 ## Фаза 3 — Проверка
 
-- [ ] T090 `npm run check-ts` и `npm test` из корня зелёные
-- [ ] T091 `npm run lint` клиента зелёный (клиент не менялся — проверка на всякий случай)
+- [x] T090 `npm run check-ts` и `npm test` из корня зелёные
+- [x] T091 `npm run lint` клиента зелёный (клиент не менялся — проверка на всякий случай)
 - [ ] T092 Ручная проверка в боте: задать пояс `Asia/Tashkent` командой, в интервале
       19:00–24:00 UTC открыть `/cold_start` — «первый день» должен дать завтрашнюю по UTC дату,
       а сегодняшний день пользователя в календаре должен быть выбираемым

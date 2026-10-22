@@ -1,15 +1,20 @@
 import {DateTime as dt} from "luxon";
+import {IllPeriod} from "../../db/templates/UserTemplate.tsx";
 
-// Второй аргумент — сегодняшний день пользователя (спецификация 002, FR-6, FR-7).
-// Пока не используется: тело перейдёт на него в фазе реализации.
-export const extractPeriodsFromYear = (periods, _today?: string) => {
-  const dayYearAgo = dt.now().minus({year: 1});
+// `today` — сегодняшний календарный день пользователя (§9). Серверного «сейчас»
+// здесь нет намеренно: на Cloud Run это UTC, и у человека восточнее граница года
+// и конец незакрытого периода уехали бы на сутки.
+export const extractPeriodsFromYear = (periods: IllPeriod[], today: string): number => {
+  const dayYearAgo = dt.fromISO(today).minus({year: 1}).toISODate();
   let result = 365;
 
   for (let i = periods.length - 1; i >= 0; i--) {
-    const start = dt.fromISO(periods[i].start_date);
-    const end = periods[i].end_date ? dt.fromISO(periods[i].end_date) : dt.now();
+    const start = periods[i].start_date;
+    // Незакрытый период длится по сегодняшний день пользователя.
+    const end = periods[i].end_date || today;
 
+    // Календарные даты вида `YYYY-MM-DD` сравниваются как строки: это тот же
+    // порядок, что и хронологический, и никакого пояса для него не нужно.
     if (start >= dayYearAgo && end >= dayYearAgo) {
       const diffDays = calcPeriodBetweenDates(start, end).days || 1;
       result = result - diffDays;
@@ -25,7 +30,9 @@ export const extractPeriodsFromYear = (periods, _today?: string) => {
   return result;
 }
 
-export const calcPeriodBetweenDates = (start, end) => {
+// Обе даты — календарные строки. `DateTime` сюда не передаётся: прогонять
+// сохранённую дату через пояс нельзя, она уедет на сутки (§9).
+export const calcPeriodBetweenDates = (start: string, end: string) => {
   const startDt = dt.fromISO(start).toISODate();
   const endDt = dt.fromISO(end).toISODate();
   return dt.fromISO(endDt).diff(dt.fromISO(startDt), ['days']).toObject();

@@ -8,14 +8,18 @@
 // Возвращаются календарные строки `YYYY-MM-DD` без смещения: день болезни —
 // это утверждение о календаре, а не момент времени.
 
-export const userToday = (_timeZone?: string | null): string => {
-  throw new Error('not implemented');
-}
+import {DateTime as dt} from "luxon";
+import {resolveTimeZone} from './reminderSchedule';
 
-export const userYesterday = (_timeZone?: string | null): string => {
-  throw new Error('not implemented');
-}
+const now = (timeZone?: string | null) => dt.now().setZone(resolveTimeZone(timeZone));
 
-export const userTodayMonth = (_timeZone?: string | null): {year: number, month: number} => {
-  throw new Error('not implemented');
+export const userToday = (timeZone?: string | null): string =>
+  now(timeZone).toISODate()!;
+
+export const userYesterday = (timeZone?: string | null): string =>
+  now(timeZone).minus({days: 1}).toISODate()!;
+
+export const userTodayMonth = (timeZone?: string | null): {year: number, month: number} => {
+  const {year, month} = now(timeZone);
+  return {year, month};
 }
