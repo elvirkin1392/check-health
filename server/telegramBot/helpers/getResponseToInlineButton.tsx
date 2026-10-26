@@ -3,7 +3,7 @@ import {Command} from "../enums/Command";
 import {MessageType} from "../enums/MessageType";
 import {translate, resolveLang, Lang} from "../i18n/index.tsx";
 import {getReminderSchedule, isValidTimeZone} from "./reminderSchedule";
-import {userTodayMonth} from "./userDay";
+import {userToday, userTodayMonth} from "./userDay";
 
 type Response = {
   closeSession?: { text: string, reply_markup?: any },
@@ -74,9 +74,12 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
     }
     case MessageType.CheckHealth: {
       if(value) {
+        // Кнопка несёт флаг «мне лучше» (`true`), а не дату — её клавиатура
+        // не знает. Днём выздоровления записывается сегодня пользователя:
+        // раньше в `end_date` уходил сам флаг, и в базе оседал `true`.
         return {
           closeSession: {text: translate('ill_period_closed', lang)},
-          updateData: {end_date: value},
+          updateData: {end_date: userToday(timeZone)},
           jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
         };
       }

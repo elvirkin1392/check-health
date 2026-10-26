@@ -1,7 +1,7 @@
-import {DateTime as dt} from "luxon";
 import {UpdateFilter} from "mongodb";
 import {Command} from "../enums/Command";
 import {IllPeriod, UserDoc} from "../../db/templates/UserTemplate.tsx";
+import {calcPeriodBetweenDates} from "./formatData";
 
 export type UserUpdate = UpdateFilter<UserDoc>;
 
@@ -31,11 +31,13 @@ export const getColdStartQuery = (user: UserDoc, _command: string, data: IllPeri
   const lastPeriod = periods?.[periods.length - 1];
 
   if (lastPeriod && !lastPeriod.end_date) {
-    const diffDays = dt
-      .now()
-      .diff(dt.fromISO(lastPeriod.start_date), ['days', 'hours'])
-      .toObject().days
-      || 1;
+    // Сколько дней между началом незакрытого периода и тем, что отмечают сейчас.
+    // Здесь стоял `dt.now()` — серверное «сейчас» против сохранённой даты, то есть
+    // ровно то, что §9 называет ошибкой. После фичи 002 рассогласование стало видным:
+    // `start_date` — день пользователя, и у человека восточнее UTC разница уходила
+    // в минус, новый период молча не создавался, а в ответ приходило «обновлено».
+    // Обе даты календарные и обе выбраны пользователем — пояс для их сравнения не нужен.
+    const diffDays = calcPeriodBetweenDates(lastPeriod.start_date, data.start_date).days || 1;
 
     if (diffDays > 1) {
       const closePrevPeriod = lastPeriod.start_date;
