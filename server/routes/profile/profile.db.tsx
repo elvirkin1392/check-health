@@ -3,6 +3,7 @@ import {UserDoc} from "../../db/templates/UserTemplate.tsx";
 
 export type ProfileDbApi = {
   getProfileById: (id: string | ObjectId) => Promise<WithId<UserDoc> | null>
+  saveLanguage: (id: string | ObjectId, lang: string) => Promise<void>
 };
 
 export const ProfileDb = ({db}: {db: Db}): ProfileDbApi => {
@@ -13,6 +14,9 @@ export const ProfileDb = ({db}: {db: Db}): ProfileDbApi => {
       const result = await users.findOne({_id: new ObjectId(id)});
 
       return result;
+    },
+    saveLanguage: async (_id, _lang) => {
+      throw new Error('not implemented');
     }
   }
 };
