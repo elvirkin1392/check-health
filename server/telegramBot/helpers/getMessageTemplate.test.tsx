@@ -1,9 +1,9 @@
+import {Settings} from "luxon";
 import {getMessageTemplate} from './getMessageTemplate.tsx';
 import {Command} from "../enums/Command.tsx";
 import {MessageType} from "../enums/MessageType.tsx";
 import {CreateStatus} from "../enums/Statuses.tsx";
 import {DEFAULT_TIME_ZONE, TIME_ZONE_OPTIONS} from "./reminderSchedule.tsx";
-import {Settings} from "luxon";
 
 describe('getMessageTemplate', () => {
   test('getMessageTemplate', () => {
@@ -36,11 +36,15 @@ describe('calendar', () => {
   });
 
   test('does not offer future dates as pickable', () => {
-    const now = new Date();
-    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: now.getFullYear(), month: now.getMonth() + 1, lang: 'en'});
+    // Момент и зона зафиксированы: ожидание брало локальный день машины, а гейт
+    // считает день по поясу, поэтому на машине не в UTC тест падал по ночам.
+    Settings.now = () => Date.UTC(2026, 9, 9, 21, 0, 0);
+    Settings.defaultZone = 'UTC';
+
+    const result = getMessageTemplate(MessageType.Calendar, {target: Command.ColdStart, year: 2026, month: 10, lang: 'en'});
     const buttons = dayButtons(result.reply_markup.inline_keyboard);
 
-    expect(buttons).toHaveLength(now.getDate());
+    expect(buttons).toHaveLength(9);
   });
 
   test('month navigation wraps the year forward at December', () => {

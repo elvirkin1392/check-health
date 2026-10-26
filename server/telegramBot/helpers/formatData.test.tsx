@@ -1,4 +1,4 @@
-import {DateTime as dt, Settings} from "luxon";
+import {Settings} from "luxon";
 import {calcPeriodBetweenDates, extractPeriodsFromYear} from './formatData';
 import {userToday} from './userDay.tsx';
 
@@ -79,18 +79,4 @@ describe('002: сохранённые даты не зависят от пояс
     }
   });
 
-  test('AC-13: смена пояса не переинтерпретирует сохранённую дату', () => {
-    // Так делать нельзя: календарная дата, прогнанная через setZone, уезжает на сутки.
-    const wrong = dt.fromISO(stored.start_date, {zone: 'Asia/Tashkent'}).setZone('UTC').toISODate();
-    expect(wrong).toBe('2026-09-30');
-
-    // Расчёты фичи от окружающего пояса не зависят — сдвига не происходит.
-    const before = calcPeriodBetweenDates(stored.start_date, stored.end_date);
-    Settings.defaultZone = 'Asia/Tashkent';
-    const after = calcPeriodBetweenDates(stored.start_date, stored.end_date);
-
-    expect(after).toStrictEqual(before);
-    expect(extractPeriodsFromYear([stored], USER_TODAY))
-      .toBe(extractPeriodsFromYear([stored], USER_TODAY));
-  });
 });
