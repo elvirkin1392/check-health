@@ -5,7 +5,7 @@
 // отрисовки (FR-5, FR-8). Подписка нужна, чтобы смена языка перерисовала интерфейс.
 
 import {useSyncExternalStore} from 'react';
-import {Lang, resolveLang, translate, TranslationKey} from './index';
+import {Lang, isLang, resolveLang, translate, TranslationKey} from './index';
 
 const STORAGE_KEY = 'lang';
 
@@ -14,11 +14,16 @@ const listeners = new Set<() => void>();
 // Нет сохранённого значения или оно нераспознаваемо — английский (FR-5).
 export const getStoredLang = (): Lang => resolveLang(localStorage.getItem(STORAGE_KEY) ?? undefined);
 
+// Записывается только настоящий выбор из двух языков. Иначе пустое поле `lang`
+// нового документа, приходящее в `GET /api/profile`, затирало бы язык,
+// вычисленный при входе из `language_code`, и интерфейс переключался бы
+// на английский у человека с русским Telegram (AC-5).
 export const storeLang = (lang: string | undefined): void => {
-  if (lang === undefined) {
+  if (!isLang(lang)) {
     return;
   }
-  localStorage.setItem(STORAGE_KEY, resolveLang(lang));
+  localStorage.setItem(STORAGE_KEY, lang);
+  document.documentElement.lang = lang;
   listeners.forEach(listener => listener());
 }
 

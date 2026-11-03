@@ -6,5 +6,10 @@ export type Lang = 'en' | 'ru';
 
 export const SUPPORTED_LANGUAGES: Lang[] = ['en', 'ru'];
 
-export const resolveLang = (lang?: string): Lang =>
-  SUPPORTED_LANGUAGES.includes(lang as Lang) ? (lang as Lang) : 'en';
+// Человек выбирает ровно из этих двух языков. Всё остальное — не выбор:
+// пустое поле нового документа, остаток старых данных, незнакомый
+// `language_code` клиента Telegram.
+export const isLang = (lang?: string | null): lang is Lang =>
+  SUPPORTED_LANGUAGES.includes(lang as Lang);
+
+export const resolveLang = (lang?: string): Lang => isLang(lang) ? lang : 'en';

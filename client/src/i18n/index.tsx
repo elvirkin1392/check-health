@@ -8,5 +8,5 @@ export const dictionaries = {en, ru};
 
 export const translate = createTranslate(dictionaries);
 
-export {resolveLang, SUPPORTED_LANGUAGES} from '../../../shared/lang.tsx';
+export {isLang, resolveLang, SUPPORTED_LANGUAGES} from '../../../shared/lang.tsx';
 export type {Lang} from '../../../shared/lang.tsx';

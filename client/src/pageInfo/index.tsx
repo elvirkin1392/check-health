@@ -27,7 +27,10 @@ const PageInfo = () => {
         config.headers.Authorization = null;
         return config;
       });
-      localStorage.clear();
+      // Сбрасывается вход, а не язык: выбор языка переживает выход и
+      // продолжает действовать на экране входа (FR-8).
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('username');
     });
   }, [])
 

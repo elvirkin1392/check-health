@@ -1,7 +1,11 @@
+import {useLang} from "../i18n/currentLang";
+
 const PageStatistics = () => {
+  const {t} = useLang();
+
   return (
     <div>
-      PageStatistics
+      {t('nav_test_results')}
     </div>
   );
 };
