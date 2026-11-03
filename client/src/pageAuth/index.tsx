@@ -3,8 +3,10 @@ import {useState} from "react";
 import {loginRequest, codeVerification} from "./api";
 import {Button, Input} from '../components/main';
 import {Container} from './styled';
+import {useLang} from '../i18n/currentLang';
 
 const PageAuth = ({onAuthorize}: { onAuthorize: (value: boolean) => void; }) => {
+  const {t} = useLang();
   const [showCodeVerification, setShowCodeVerification] = useState(false);
   const [username, setUsername] = useState('');
   const [code, setCode] = useState('');
@@ -23,25 +25,25 @@ const PageAuth = ({onAuthorize}: { onAuthorize: (value: boolean) => void; }) => 
 
   const Verify = <>
     <div className='wrap'>
-      <label>Code was sent to @{username}</label>
+      <label>{t('code_sent', {username})}</label>
       <Input type="text"
              className='input'
-             placeholder='code'
+             placeholder={t('code')}
              value={code}
              onChange={(event) => setCode(event.target.value)}/>
     </div>
-    <Button onClick={handleVerify}>Verify</Button>
+    <Button onClick={handleVerify}>{t('verify')}</Button>
   </>;
 
   const Login = <>
     <div className='prefix'>
       <Input type="text"
              className='input'
-             placeholder='username'
+             placeholder={t('username')}
              value={username}
              onChange={(event) => setUsername(event.target.value)}/>
     </div>
-    <Button onClick={handleLogin}>Login</Button>
+    <Button onClick={handleLogin}>{t('login')}</Button>
   </>;
 
   return (

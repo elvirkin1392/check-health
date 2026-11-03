@@ -1,15 +1,17 @@
 import {countDaysFromLastPeriodTilNow, countSummaryFromDayPeriodsLastYear, DatePeriod} from "./utils";
 import {Switch, Container} from '../components/main';
 import {SNumber, SSummary, SWrap} from "./styled/HealthyDays";
+import {useLang} from "../i18n/currentLang";
 
 const HealthyDays = ({info, isMobile}: { info: DatePeriod[], isMobile?: boolean }) => {
+    const {t} = useLang();
     const sickDays = countSummaryFromDayPeriodsLastYear(info);
     const healthyDays = countDaysFromLastPeriodTilNow(info);
 
     const forMobile = <>
       <Container>
         <div style={{color: '#999', fontSize: '24px'}}>
-          healthy
+          {t('healthy')}
         </div>
         <div style={{color: '#849A22', fontSize: ' 96px', lineHeight: '122px'}}>
           {healthyDays}
@@ -25,7 +27,7 @@ const HealthyDays = ({info, isMobile}: { info: DatePeriod[], isMobile?: boolean 
       ? forMobile
       : <SWrap>
         <Container $width='200px' $height='200px'>
-          <div style={{color: '#999', letterSpacing: '2px'}}>healthy</div>
+          <div style={{color: '#999', letterSpacing: '2px'}}>{t('healthy')}</div>
           <SNumber>{healthyDays}</SNumber>
         </Container>
 

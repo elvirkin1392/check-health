@@ -5,11 +5,17 @@
 // `language_code` приходит из `initData`, проверенного подписью, тогда как
 // клиентский `initDataUnsafe` не проверен ничем (§13).
 
-import {Lang} from "../../../shared/lang.tsx";
+import {Lang, resolveLang} from "../../../shared/lang.tsx";
 
 export const resolveUserLang = (
-  _storedLang?: string | null,
-  _telegramLanguageCode?: string | null,
+  storedLang?: string | null,
+  telegramLanguageCode?: string | null,
 ): Lang => {
-  throw new Error('not implemented');
+  // `resolveLang` falls back to English, so a value is recognised when it comes back
+  // unchanged. An unrecognised stored value must not shadow a usable `language_code`.
+  const recognised = [storedLang, telegramLanguageCode].find(
+    (code): code is string => !!code && resolveLang(code) === code,
+  );
+
+  return resolveLang(recognised);
 }

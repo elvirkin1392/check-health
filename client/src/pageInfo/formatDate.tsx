@@ -3,6 +3,6 @@
 
 import {Lang} from '../../../shared/lang.tsx';
 
-export const formatAnalyteDate = (_date: Date, _lang: Lang): string => {
-  throw new Error('not implemented');
-}
+// Тот же вид, что был в таблице: `21 Oct 2026` — меняется только язык месяца.
+export const formatAnalyteDate = (date: Date, lang: Lang): string =>
+  `${date.getDate()} ${date.toLocaleString(lang, {month: 'short'})} ${date.getFullYear()}`;

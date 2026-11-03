@@ -7,6 +7,8 @@ import {rescheduleUserJobs} from "../../cron/main.tsx";
 import {verifyTelegramInitData} from "./telegramInitData.util.tsx";
 import {isValidTimeZone} from "../../telegramBot/helpers/reminderSchedule.tsx";
 import {User} from "../../telegramBot/telegram.types.tsx";
+import {Lang} from "../../../shared/lang.tsx";
+import {resolveUserLang} from "./resolveUserLang.tsx";
 
 type LoginResult = {url: string} | {status: number, text: string} | Error;
 
@@ -67,7 +69,9 @@ export const codeVerification = async (username: string, code: string): Promise<
   return new Error('Wrong code');
 }
 
-export const loginWithTelegramWebApp = async (initData: string, timeZone?: string): Promise<Session> => {
+type TelegramSession = Session & {lang: Lang};
+
+export const loginWithTelegramWebApp = async (initData: string, timeZone?: string): Promise<TelegramSession> => {
   const telegramUser = verifyTelegramInitData(initData, process.env.CHECK_HEALTH_TELEGRAM_BOT_TOKEN);
   if (!telegramUser) {
     throw new HttpException(401, "Invalid Telegram Web App data");
@@ -87,6 +91,9 @@ export const loginWithTelegramWebApp = async (initData: string, timeZone?: strin
   return {
     bio: user.bio,
     accessToken: generateToken(user._id),
+    // Computed here, from the stored choice and the signed initData, not in the
+    // browser, where `initDataUnsafe` is unverified (§13).
+    lang: resolveUserLang(user.lang, telegramUser.language_code),
   }
 }
 

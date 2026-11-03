@@ -9,4 +9,6 @@ export const en = {
   healthy: 'healthy',
   previous: 'prev',
   settings_language: 'Language',
+  language_en: 'English',
+  language_ru: 'Русский',
 }

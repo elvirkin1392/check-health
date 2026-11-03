@@ -15,8 +15,9 @@ export const ProfileDb = ({db}: {db: Db}): ProfileDbApi => {
 
       return result;
     },
-    saveLanguage: async (_id, _lang) => {
-      throw new Error('not implemented');
+    saveLanguage: async (id, lang) => {
+      // The same `lang` field the bot reads and writes: one value for both (FR-4).
+      await users.updateOne({_id: new ObjectId(id)}, {$set: {lang}});
     }
   }
 };

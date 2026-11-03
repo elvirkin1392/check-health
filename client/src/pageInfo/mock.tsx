@@ -1,6 +1,6 @@
 const infoData = [
   {
-    name: 'Vitamin D', result: '23',
+    code: 'vitamin_d', name: 'Vitamin D', result: '23',
     lastDate: new Date(),
     prevResult: '35',
     normal: {
@@ -9,7 +9,7 @@ const infoData = [
     }
   },
   {
-    name: 'Bilirubin', result: '8.04',
+    code: 'bilirubin', name: 'Bilirubin', result: '8.04',
     lastDate: new Date(),
     prevResult: '9.04',
     normal: {
@@ -18,7 +18,7 @@ const infoData = [
     }
   },
   {
-    name: 'Creatinine', result: '21.1',
+    code: 'creatinine', name: 'Creatinine', result: '21.1',
     lastDate: new Date(),
     prevResult: '21.1',
     normal: {
@@ -27,7 +27,7 @@ const infoData = [
     }
   },
   {
-    name: 'Bilirubin', result: '8.04',
+    code: 'bilirubin', name: 'Bilirubin', result: '8.04',
     lastDate: new Date(),
     prevResult: '9.04',
     normal: {
@@ -36,7 +36,7 @@ const infoData = [
     }
   },
   {
-    name: 'Creatinine', result: '21.1',
+    code: 'creatinine', name: 'Creatinine', result: '21.1',
     lastDate: new Date(),
     prevResult: '21.1',
     normal: {
@@ -45,7 +45,7 @@ const infoData = [
     }
   },
   {
-    name: 'Bilirubin', result: '8.04',
+    code: 'bilirubin', name: 'Bilirubin', result: '8.04',
     lastDate: new Date(),
     prevResult: '9.04',
     normal: {
@@ -54,7 +54,7 @@ const infoData = [
     }
   },
   {
-    name: 'Creatinine', result: '21.1',
+    code: 'creatinine', name: 'Creatinine', result: '21.1',
     lastDate: new Date(),
     prevResult: '21.1',
     normal: {
@@ -63,7 +63,7 @@ const infoData = [
     }
   },
   {
-    name: 'Bilirubin', result: '8.04',
+    code: 'bilirubin', name: 'Bilirubin', result: '8.04',
     lastDate: new Date(),
     prevResult: '9.04',
     normal: {
@@ -72,7 +72,7 @@ const infoData = [
     }
   },
   {
-    name: 'Creatinine', result: '21.1',
+    code: 'creatinine', name: 'Creatinine', result: '21.1',
     lastDate: new Date(),
     prevResult: '21.1',
     normal: {

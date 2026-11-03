@@ -1,9 +1,12 @@
 import {instance as axios} from "../axios";
+import {storeLang} from "../i18n/currentLang";
 
-const applyLoginResult = (message: {accessToken?: string, bio?: {username: string}}) => {
+const applyLoginResult = (message: {accessToken?: string, bio?: {username: string}, lang?: string}) => {
   if (message.accessToken && message.bio) {
     localStorage.setItem('accessToken', message.accessToken);
     localStorage.setItem('username', message.bio.username);
+    // Only the Telegram login carries it; the code login leaves the stored value alone.
+    storeLang(message.lang);
 
     return {isCodeVerified: true};
   }

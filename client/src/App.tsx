@@ -4,6 +4,7 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import PageStatistics from './pageStatistics/index.tsx'
 import PageInfo from './pageInfo/index.tsx'
 import PageAuth from './pageAuth/index.tsx'
+import PageSettings from './pageSettings/index.tsx'
 import {instance as axios} from "./axios";
 import {telegramLogin} from "./pageAuth/api";
 
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: "/statistics",
     element: <PageStatistics/>,
+  },
+  {
+    path: "/settings",
+    element: <PageSettings/>,
   },
 ], {basename: import.meta.env.BASE_URL});
 

@@ -11,4 +11,6 @@ export const ru: typeof en = {
   healthy: 'здоров',
   previous: 'пред.',
   settings_language: 'Язык',
+  language_en: 'English',
+  language_ru: 'Русский',
 }

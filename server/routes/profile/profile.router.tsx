@@ -12,3 +12,4 @@ const profileService = ProfileService({profileDb});
 const profileController = ProfileController({profileService});
 
 profileRouter.get("/profile", auth.required, profileController.getProfile);
+profileRouter.put("/profile/language", auth.required, profileController.setLanguage);

@@ -9,4 +9,5 @@ export type Bio = {
 export type UserData = {
   bio: Bio;
   ill_periods: DatePeriod[];
+  lang?: string;
 };
