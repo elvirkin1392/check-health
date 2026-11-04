@@ -80,6 +80,12 @@ const buildTimeZoneKeyboard = () => {
   return rows;
 }
 
+// Клавиатура под разобранным файлом: подтвердить или отменить (004, FR-5).
+// Номер черновика короткий, чтобы кнопка влезла в 64 байта (§11).
+export const buildLabKeyboard = (_draftId: string, _lang: Lang): {inline_keyboard: unknown[][]} => {
+  throw new Error('not implemented');
+}
+
 const MessageTemplates = {
   [Command.Start]: ({status, lang}) => {
     return {text: translate(status === CreateStatus.Failed ? 'start_failed' : 'start_created', lang)}},

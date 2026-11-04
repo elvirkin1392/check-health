@@ -23,6 +23,13 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Имя с подчёркиванием — «параметр нужен по сигнатуре, но не используется».
+      // Так уже написан серверный код, и tsc эту договорённость знает;
+      // eslint о ней надо сказать отдельно.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
     },
   },
 )

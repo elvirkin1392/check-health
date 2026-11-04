@@ -1,4 +1,4 @@
-export {translate} from './translate';
+export {translate, dictionaries} from './translate';
 export type {TranslationKey} from './translate';
 
 // Re-exported so bot code keeps importing language helpers from one place,

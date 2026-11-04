@@ -2,9 +2,13 @@ import {User} from "../../telegramBot/telegram.types.tsx";
 
 export type IllPeriod = {start_date: string, end_date?: string | null};
 
+// Форма результата общая с Mini App — она же читает эти записи.
+import type {AnalyteResult} from '../../../shared/analytes.tsx';
+export type {AnalyteResult};
+
 export type UserDoc = {
   bio: User,
-  blood_tests: unknown[],
+  blood_tests: AnalyteResult[],
   ill_periods: IllPeriod[],
   woman_days: unknown[],
   loginCode: string,

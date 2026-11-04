@@ -4,4 +4,7 @@ import {ru} from "./dictionaries/ru";
 
 export type TranslationKey = keyof typeof en;
 
-export const translate = createTranslate({en, ru});
+// Выставлены наружу, чтобы тесты могли сверить наборы ключей (§12).
+export const dictionaries = {en, ru};
+
+export const translate = createTranslate(dictionaries);

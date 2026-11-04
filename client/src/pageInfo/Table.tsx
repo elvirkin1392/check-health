@@ -4,8 +4,11 @@ import {Container} from "../components/main";
 import {useLang} from "../i18n/currentLang";
 import {analyteLabel} from "../i18n/analytes";
 import {formatAnalyteDate} from "./formatDate";
+import {AnalyteResult} from "../../../shared/analytes.tsx";
 
-const Table = () => {
+// Пока таблица всё ещё читает `mock.tsx`; данные профиля приходят сюда
+// в реализации 004 (FR-6).
+const Table = ({results: _results}: {results?: AnalyteResult[]} = {}) => {
   const {lang, t} = useLang();
 
   return (
