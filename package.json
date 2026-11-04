@@ -14,7 +14,9 @@
     "test": "npm test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
+    "fixtures": "npx tsx server/telegramBot/labImport/fixtures/build.tsx",
     "dev:server": "npm run dev --workspace @check-health/server",
-    "dev:client": "npm run dev --workspace @check-health/client"
+    "dev:client": "npm run dev --workspace @check-health/client",
+    "fixtures:check": "npm run fixtures && git diff --exit-code -- server/telegramBot/labImport/fixtures"
   }
 }
