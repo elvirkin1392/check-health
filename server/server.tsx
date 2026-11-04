@@ -4,6 +4,7 @@ import express from 'express';
 import {fileURLToPath} from 'node:url';
 import routes from './routes/routes.tsx';
 import {restoreJobs} from './cron/main.tsx';
+import {restoreLabImports} from './telegramBot/telegram.service.tsx';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,3 +27,9 @@ app.listen(port, () => {
 
 restoreJobs().catch((error) => console.error('Failed to restore cron jobs', error));
 
+
+// Индексы черновиков и зависшие разборы (004). Свой проход, а не часть restoreJobs:
+// сбой одного не должен останавливать другой (§10).
+restoreLabImports().catch((error) => console.error(
+  `Failed to restore lab imports: error=${error instanceof Error ? error.name : 'unknown'}`
+));

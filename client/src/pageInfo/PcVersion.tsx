@@ -14,7 +14,7 @@ const PcVersion = ({data}: {data: UserData}) => {
         <Calendar/>
         <Container>
           <HealthyDays info={data.ill_periods} />
-          <Table/>
+          <Table results={data.blood_tests}/>
         </Container>
       </div>
       <Sidebar bio={data.bio}/>

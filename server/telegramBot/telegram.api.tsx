@@ -29,3 +29,38 @@ export const unsetWebhook = () => {
     url: ''
   }).then(response => response.data);
 }
+
+
+// Скачивание файла, присланного человеком: сначала getFile даёт `file_path`,
+// потом по нему качается содержимое с отдельного хоста `/file/bot<TOKEN>/`.
+//
+// §14: ни `file_path`, ни имя файла в логи не попадают. У скачивания свой клиент
+// без перехватчика `tgAxios`, а ошибка пересоздаётся с собственным текстом: в
+// исходной ошибке axios лежит `config` с URL, где путь файла и токен бота, и
+// отдавать её наружу незачем — кто-нибудь залогирует её целиком.
+const fileAxios = axios.create({
+  baseURL: `https://api.telegram.org/file/bot${TG_TOKEN}`,
+  responseType: 'arraybuffer',
+});
+
+export const downloadFile = async (fileId: string): Promise<Uint8Array> => {
+  const info = await tgAxios.post(`/getFile`, {file_id: fileId}).then(response => response.data);
+  const filePath: unknown = info?.result?.file_path;
+
+  // Telegram ответил 200, но пути нет (например, файл больше 20 МБ): это отказ,
+  // а не пустой файл (§11). Сам ответ в ошибку не кладём.
+  if (info?.ok !== true || typeof filePath !== 'string' || filePath === '') {
+    throw new Error('Telegram getFile returned no file_path');
+  }
+
+  try {
+    const response = await fileAxios.get<ArrayBuffer>(`/${filePath}`);
+
+    return new Uint8Array(response.data);
+  } catch (error) {
+    // Сообщение и код без адреса и без тела ответа: в них могут быть путь к файлу и токен.
+    const status = (error as {response?: {status?: number}}).response?.status;
+    console.error(`Telegram file download failed${status ? `: ${status}` : ''}`);
+    throw new Error(`Telegram file download failed${status ? `: ${status}` : ''}`);
+  }
+}

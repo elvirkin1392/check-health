@@ -31,7 +31,14 @@ export type MessageEntity = {
   custom_emoji_id?: string
 }
 export type Audio = {}
-export type Document = {}
+export type Document = {
+  file_id: string,
+  file_unique_id: string,
+  thumbnail?: PhotoSize,
+  file_name?: string,
+  mime_type?: string,
+  file_size?: number,
+}
 export type PhotoSize = {}
 export type Video = {}
 export type Voice = {}

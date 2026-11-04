@@ -20,7 +20,7 @@ const MobileVersion = ({data}: {data: UserData}) => {
       </Container>
 
       <HealthyDays info={data.ill_periods} isMobile/>
-      <Table/>
+      <Table results={data.blood_tests}/>
     </div>
   );
 };

@@ -32,11 +32,19 @@ router.post('/listenWebHook', auth.optional, async function (req: Request, res: 
   }
 
   const body = req.body;
-  try {
-    await manageTgUpdates(body);
-    return res.sendStatus(200);
-  } catch (error) {
-    return res.status(500).json({message: error?.message});
-  }
+  // Telegram переотправляет апдейт, если ответ не пришёл за несколько секунд, а разбор
+  // PDF столько и длится: дождавшись его, получили бы дубль (§10). Поэтому отвечаем
+  // сразу, а обработку не ждём.
+  // Раз ответ уже ушёл, ошибку некому вернуть: без лога она пропала бы совсем.
+  // Пишем только код и error.name — текст исключения может цитировать содержимое
+  // файла или сообщения (§14).
+  manageTgUpdates(body).catch((error) => {
+    console.error(
+      `webhook update failed: update=${body?.update_id} code=update_processing`
+      + ` error=${error instanceof Error ? error.name : 'unknown'}`
+    );
+  });
+
+  return res.sendStatus(200);
 })
 export default router;

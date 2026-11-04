@@ -22,8 +22,8 @@ type CalendarParams = {target: string, year: number, month: number, lang: Lang, 
 
 // Telegram caps callback_data at 64 bytes, so navigation buttons carry a
 // short target code instead of the full command string.
-const CALENDAR_TARGET_CODES: Record<string, string> = {[Command.ColdStart]: 's', [Command.ColdEnd]: 'e'};
-const CALENDAR_TARGET_FROM_CODE: Record<string, string> = {s: Command.ColdStart, e: Command.ColdEnd};
+const CALENDAR_TARGET_CODES: Record<string, string> = {[Command.ColdStart]: 's', [Command.ColdEnd]: 'e', [Command.LabDate]: 'l'};
+const CALENDAR_TARGET_FROM_CODE: Record<string, string> = {s: Command.ColdStart, e: Command.ColdEnd, l: Command.LabDate};
 export const decodeCalendarTarget = (code: string): string => CALENDAR_TARGET_FROM_CODE[code] ?? code;
 
 const navButton = (text: string, {target, year, month}: Omit<CalendarParams, 'lang'>) => ({
@@ -82,9 +82,12 @@ const buildTimeZoneKeyboard = () => {
 
 // Клавиатура под разобранным файлом: подтвердить или отменить (004, FR-5).
 // Номер черновика короткий, чтобы кнопка влезла в 64 байта (§11).
-export const buildLabKeyboard = (_draftId: string, _lang: Lang): {inline_keyboard: unknown[][]} => {
-  throw new Error('not implemented');
-}
+export const buildLabKeyboard = (draftId: string, lang: Lang): {inline_keyboard: unknown[][]} => ({
+  inline_keyboard: [[
+    {text: translate('lab_confirm_button', lang), callback_data: JSON.stringify({command: Command.LabConfirm, value: draftId})},
+    {text: translate('lab_cancel_button', lang), callback_data: JSON.stringify({command: Command.LabCancel, value: draftId})}
+  ]]
+});
 
 const MessageTemplates = {
   [Command.Start]: ({status, lang}) => {

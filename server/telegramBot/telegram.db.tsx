@@ -5,7 +5,8 @@ import {CreateStatus} from "./enums/Statuses.tsx";
 import {Lang} from "./i18n/index.tsx";
 import {resolveUserLang} from "../../shared/lang.tsx";
 import {User} from "./telegram.types.tsx";
-import {IllPeriod, UserDoc} from "../db/templates/UserTemplate.tsx";
+import {AnalyteResult, IllPeriod, UserDoc} from "../db/templates/UserTemplate.tsx";
+import {LabImportDb, LabImportDbApi} from "./labImport/labImport.db.tsx";
 
 export const createDbUser = async (userTg: User): Promise<CreateStatus> => {
   const users = db.collection<UserDoc>('users');
@@ -92,7 +93,8 @@ export const getDbLastIllPeriod = async (user: User): Promise<IllPeriod | undefi
   }
 }
 
-export const getDbUserLang = async (userTg: User): Promise<Lang> => {
+// Хватает id и языка клиента: при старте человека знаем только по номеру (004, T056).
+export const getDbUserLang = async (userTg: Pick<User, 'id' | 'language_code'>): Promise<Lang> => {
   const {id: userId, language_code} = userTg;
   const users = db.collection<UserDoc>('users');
   const user = await users.findOne({"bio.id": userId}, {projection: {lang: 1}});
@@ -118,3 +120,27 @@ export const getDbIllPeriods = async (user: User): Promise<IllPeriod[] | undefin
     throw e;
   }
 }
+
+
+// Черновики разбора файла (004) лежат в своей коллекции; собирается здесь, чтобы
+// остальной код не знал про `db` (§4).
+export const getLabImportDb = (): LabImportDbApi => LabImportDb({db});
+
+// Результаты анализов в документе пользователя. Читаем только `blood_tests`
+// и только дописываем: перезаписать список целиком значило бы потерять
+// записи, которые появились между чтением и записью.
+export const analytesDb = {
+  getSaved: async (userId: number): Promise<AnalyteResult[]> => {
+    const user = await db.collection<UserDoc>('users').findOne({"bio.id": userId}, {projection: {blood_tests: 1}});
+    return user?.blood_tests ?? [];
+  },
+  append: async (userId: number, results: AnalyteResult[]): Promise<void> => {
+    const {matchedCount} = await db.collection<UserDoc>('users')
+      .updateOne({"bio.id": userId}, {$push: {blood_tests: {$each: results}}});
+    // Человек мог прислать файл, не начав с /start: документа у него нет. Тихий
+    // успех здесь соврал бы, что результаты сохранены.
+    if (matchedCount === 0) {
+      throw new Error('User document not found');
+    }
+  },
+};

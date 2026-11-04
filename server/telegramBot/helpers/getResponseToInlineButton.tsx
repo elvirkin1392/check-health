@@ -11,6 +11,10 @@ type Response = {
   jobConfig?: any,
   // Set when the change invalidates the schedule of an already-running job.
   rescheduleJobs?: boolean,
+  // Что делать с загруженным файлом анализов (004). Эта функция чистая и в базу
+  // не ходит, поэтому только называет действие, а вызывает сервис разбора
+  // уже telegram.service.
+  labImport?: {action: 'confirm' | 'cancel' | 'date', value: string},
 }
 
 export const getResponseToInlineButton = (commandKey: string, value?: any, lang: Lang = 'en', timeZone?: string): Response => {
@@ -71,6 +75,18 @@ export const getResponseToInlineButton = (commandKey: string, value?: any, lang:
         updateData: {end_date: value},
         jobConfig: {shouldStop: true, type: MessageType.CheckHealth}
       };
+    }
+    case Command.LabConfirm:
+      return {labImport: {action: 'confirm', value}};
+    case Command.LabCancel:
+      return {labImport: {action: 'cancel', value}};
+    case Command.LabDate: {
+      // В кнопке дня приходит только дата: какой черновик её ждёт, сервис берёт
+      // из базы по статусу (план, раздел «Интерфейсы»).
+      if (!value) {
+        return {closeSession: getMessageTemplate(MessageType.Calendar, {target: Command.LabDate, ...userTodayMonth(timeZone), lang, timeZone})};
+      }
+      return {labImport: {action: 'date', value}};
     }
     case MessageType.CheckHealth: {
       if(value) {
