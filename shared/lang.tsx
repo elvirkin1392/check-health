@@ -13,3 +13,11 @@ export const isLang = (lang?: string | null): lang is Lang =>
   SUPPORTED_LANGUAGES.includes(lang as Lang);
 
 export const resolveLang = (lang?: string): Lang => isLang(lang) ? lang : 'en';
+
+// Какой язык показывать человеку: его сохранённый выбор, иначе язык клиента
+// Telegram, иначе английский. Одно правило для бота и для Mini App — FR-5 спеки
+// 003 требует именно этого, поэтому оно лежит здесь, а не в двух местах.
+export const resolveUserLang = (
+  storedLang?: string | null,
+  telegramLanguageCode?: string | null,
+): Lang => resolveLang(storedLang || telegramLanguageCode || undefined);

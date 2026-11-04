@@ -2,7 +2,8 @@ import {db} from "../db/dbClient.tsx";
 import {getQuery} from "./helpers/dbQueries.tsx";
 import {UserTemplate} from "../db/templates/UserTemplate.tsx";
 import {CreateStatus} from "./enums/Statuses.tsx";
-import {resolveLang, Lang} from "./i18n/index.tsx";
+import {Lang} from "./i18n/index.tsx";
+import {resolveUserLang} from "../../shared/lang.tsx";
 import {User} from "./telegram.types.tsx";
 import {IllPeriod, UserDoc} from "../db/templates/UserTemplate.tsx";
 
@@ -95,7 +96,7 @@ export const getDbUserLang = async (userTg: User): Promise<Lang> => {
   const {id: userId, language_code} = userTg;
   const users = db.collection<UserDoc>('users');
   const user = await users.findOne({"bio.id": userId}, {projection: {lang: 1}});
-  return resolveLang(user?.lang || language_code);
+  return resolveUserLang(user?.lang, language_code);
 }
 
 // Returns the raw stored value, which is absent for every document written

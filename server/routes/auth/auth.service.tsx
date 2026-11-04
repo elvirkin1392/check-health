@@ -7,8 +7,7 @@ import {rescheduleUserJobs} from "../../cron/main.tsx";
 import {verifyTelegramInitData} from "./telegramInitData.util.tsx";
 import {isValidTimeZone} from "../../telegramBot/helpers/reminderSchedule.tsx";
 import {User} from "../../telegramBot/telegram.types.tsx";
-import {Lang} from "../../../shared/lang.tsx";
-import {resolveUserLang} from "./resolveUserLang.tsx";
+import {Lang, resolveUserLang} from "../../../shared/lang.tsx";
 
 type LoginResult = {url: string} | {status: number, text: string} | Error;
 

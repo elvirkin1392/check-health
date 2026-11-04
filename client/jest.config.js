@@ -1,6 +1,7 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 export default {
-  testEnvironment: "node",
+  // Приложение браузерное: рендер-тестам нужны DOM и localStorage.
+  testEnvironment: "jsdom",
   transform: {
     // Было "^.test.tsx?$" — такой шаблон не матчил почти ничего, TypeScript
     // не преобразовывался, и ни один тест здесь никогда не запускался:

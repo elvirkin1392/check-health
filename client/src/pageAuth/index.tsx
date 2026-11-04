@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
 
 import {loginRequest, codeVerification} from "./api";
 import {Button, Input} from '../components/main';
@@ -30,7 +30,7 @@ const PageAuth = ({onAuthorize}: { onAuthorize: (value: boolean) => void; }) => 
              className='input'
              placeholder={t('code')}
              value={code}
-             onChange={(event) => setCode(event.target.value)}/>
+             onChange={(event: ChangeEvent<HTMLInputElement>) => setCode(event.target.value)}/>
     </div>
     <Button onClick={handleVerify}>{t('verify')}</Button>
   </>;
@@ -41,7 +41,7 @@ const PageAuth = ({onAuthorize}: { onAuthorize: (value: boolean) => void; }) => 
              className='input'
              placeholder={t('username')}
              value={username}
-             onChange={(event) => setUsername(event.target.value)}/>
+             onChange={(event: ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)}/>
     </div>
     <Button onClick={handleLogin}>{t('login')}</Button>
   </>;
