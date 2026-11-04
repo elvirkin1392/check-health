@@ -84,7 +84,7 @@ describe('AC-11: язык ответа', () => {
     const text = formatSummary({rows: [row()], unparsed: [], date: '2026-10-21'}, 'en')
       .join('\n');
 
-    expect(text).toContain('Bilirubin');
+    expect(text).toContain('Total bilirubin');
   });
 
   test('язык меняет текст сообщения', () => {

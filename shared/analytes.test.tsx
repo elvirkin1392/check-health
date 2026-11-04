@@ -63,8 +63,18 @@ describe('подпись показателя', () => {
   test('AC-2: узнанный показатель подписан на языке интерфейса', () => {
     const bilirubin = matchAnalyte('Билирубин общий');
 
-    expect(analyteLabel(bilirubin, 'ru')).toBe('Билирубин');
-    expect(analyteLabel(bilirubin, 'en')).toBe('Bilirubin');
+    expect(analyteLabel(bilirubin, 'ru')).toBe('Билирубин общий');
+    expect(analyteLabel(bilirubin, 'en')).toBe('Total bilirubin');
+  });
+
+  test('AC-2: подпись называет показатель целиком, а не его род', () => {
+    // Билирубинов в бланке бывает три. Подпись, которая называет только род,
+    // сливает в глазах человека разные измерения — а в данных они разные.
+    const total = matchAnalyte('Билирубин общий');
+    const direct = matchAnalyte('Билирубин прямой');
+
+    expect(analyteLabel(total, 'ru')).not.toBe(analyteLabel(direct, 'ru'));
+    expect(analyteLabel(total, 'en')).not.toBe(analyteLabel(direct, 'en'));
   });
 
   test('AC-3: незнакомый показатель подписан так, как записан в файле', () => {

@@ -62,7 +62,9 @@ export const ANALYTES: Record<string, AnalyteEntry> = {
     synonyms: ['Гликированный гемоглобин', 'Гликозилированный гемоглобин', 'HbA1c', 'Hemoglobin A1c', 'Glycated hemoglobin'],
   },
   bilirubin: {
-    labels: {en: 'Bilirubin', ru: 'Билирубин'},
+    // Именно «общий», а не «Билирубин»: в одном бланке бывает три билирубина,
+    // и подпись, называющая только род, не говорит, какой это (спецификация 004).
+    labels: {en: 'Total bilirubin', ru: 'Билирубин общий'},
     synonyms: ['Билирубин', 'Билирубин общий', 'Общий билирубин', 'Bilirubin', 'Total bilirubin', 'Bilirubin total'],
   },
   bilirubin_direct: {
