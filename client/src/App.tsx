@@ -5,7 +5,6 @@ import PageStatistics from './pageStatistics/index.tsx'
 import PageInfo from './pageInfo/index.tsx'
 import PageAuth from './pageAuth/index.tsx'
 import PageSettings from './pageSettings/index.tsx'
-import {instance as axios} from "./axios";
 import {telegramLogin} from "./pageAuth/api";
 
 const router = createBrowserRouter([
@@ -25,14 +24,6 @@ const router = createBrowserRouter([
 
 export default function App() {
   const username = localStorage.getItem('username');
-  const accessToken = localStorage.getItem('accessToken');
-
-  if(accessToken) {
-    axios.interceptors.request.use(config => {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-      return config;
-    });
-  }
 
   const [isAuthorized, setAuthorized] = useState(Boolean(username));
   const authorize = (value: boolean) => {

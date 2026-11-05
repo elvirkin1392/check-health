@@ -7,6 +7,8 @@ import MobileVersion from "./MobileVersion";
 import {UserData} from "./types";
 import {storeLang} from "../i18n/currentLang";
 
+const NETWORK_ERROR_CODES = ['ERR_NETWORK', 'ECONNABORTED', 'ETIMEDOUT'];
+
 const PageInfo = () => {
   const [isMobile] = useMediaQuery();
   const [data, setData] = useState<UserData>({
@@ -22,11 +24,14 @@ const PageInfo = () => {
       storeLang(result.data.lang);
     }
 
-    fetchProfile().catch(() => {
-      axios.interceptors.request.use(config => {
-        config.headers.Authorization = null;
-        return config;
-      });
+    fetchProfile().catch((error: {code?: string, response?: {status: number}}) => {
+      // Сеть или сервер подвели (холодный старт, таймаут, 5xx) — токен тут ни при чём,
+      // стирать его значит разлогинить человека на ровном месте.
+      const status = error?.response?.status;
+      const isTransient = NETWORK_ERROR_CODES.includes(error?.code ?? '') || (status !== undefined && status >= 500);
+      if (isTransient) {
+        return;
+      }
       // Сбрасывается вход, а не язык: выбор языка переживает выход и
       // продолжает действовать на экране входа (FR-8).
       localStorage.removeItem('accessToken');
