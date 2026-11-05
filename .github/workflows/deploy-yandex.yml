@@ -1,0 +1,82 @@
+name: Deploy server to Yandex Cloud
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'client/**'
+      - 'specs/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: yandex-deploy
+  cancel-in-progress: false
+
+# Ids of resources in the Yandex Cloud folder. None of them is a secret: without
+# the service account key they give no access.
+env:
+  YC_FOLDER_ID: b1gh4gvssp6enj02a0es
+  YC_REGISTRY_ID: crpgcfuq5hu4j0680csq
+  YC_CONTAINER_NAME: check-health
+  # The container pulls its image as this account (role container-registry.images.puller).
+  YC_RUNTIME_SA_ID: aje86fff3rioecs2u5mf
+  API_URL: https://bbagaldqmgffr9jtangg.containers.yandexcloud.net
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install and authenticate yc
+        env:
+          YC_SA_JSON_CREDENTIALS: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i "$HOME/yc" -n
+          echo "$HOME/yc/bin" >> "$GITHUB_PATH"
+          printf '%s' "$YC_SA_JSON_CREDENTIALS" > "$RUNNER_TEMP/key.json"
+          "$HOME/yc/bin/yc" config set service-account-key "$RUNNER_TEMP/key.json"
+          "$HOME/yc/bin/yc" config set folder-id "$YC_FOLDER_ID"
+          rm "$RUNNER_TEMP/key.json"
+
+      # The root Dockerfile builds the server workspace together with shared/;
+      # .dockerignore keeps the client and the docs out of the build context.
+      - name: Build and push the image
+        run: |
+          IMAGE="cr.yandex/$YC_REGISTRY_ID/check-health:$GITHUB_SHA"
+          yc iam create-token | docker login --username iam --password-stdin cr.yandex
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      # One --environment per variable: values are not split on commas that way.
+      # concurrency keeps everything on one instance under this load, so the
+      # in-process reminder timers are not duplicated across instances.
+      - name: Deploy a new revision
+        run: |
+          yc serverless container revision deploy \
+            --container-name "$YC_CONTAINER_NAME" \
+            --image "$IMAGE" \
+            --service-account-id "$YC_RUNTIME_SA_ID" \
+            --cores 1 \
+            --core-fraction 100 \
+            --memory 512MB \
+            --concurrency 16 \
+            --execution-timeout 60s \
+            --environment "CHECK_HEALTH_TELEGRAM_BOT_TOKEN=${{ secrets.CHECK_HEALTH_TELEGRAM_BOT_TOKEN }}" \
+            --environment "CHECK_HEALTH_DB_HOST=${{ secrets.CHECK_HEALTH_DB_HOST }}" \
+            --environment "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
+            --environment "CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET=${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}" \
+            --environment "CHECK_HEALTH_TELEGRAM_WEBHOOK_URL=$API_URL/api/listenWebHook"
+
+      # Points Telegram at this deployment. Idempotent, so it runs on every deploy
+      # and the webhook can never be left on an old address.
+      - name: Register the Telegram webhook
+        env:
+          TG_TOKEN: ${{ secrets.CHECK_HEALTH_TELEGRAM_BOT_TOKEN }}
+          TG_SECRET: ${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}
+        run: |
+          curl -sS --fail-with-body "https://api.telegram.org/bot$TG_TOKEN/setWebhook" \
+            --data-urlencode "url=$API_URL/api/listenWebHook" \
+            --data-urlencode "secret_token=$TG_SECRET" | grep -q '"ok":true'

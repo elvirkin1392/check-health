@@ -20,9 +20,9 @@ coverage/
 .DS_Store
 temp/
 
-# A 31 MB macOS x86_64 binary — useless on Cloud Run's Linux containers
+# A 31 MB macOS x86_64 binary — useless in the server's Linux container
 cloud-sql-proxy
 
-# Written by the Cloud Run deploy workflow from GitHub secrets
+# Written by the former Cloud Run deploy workflow from GitHub secrets
 env.yaml
 *.tsbuildinfo

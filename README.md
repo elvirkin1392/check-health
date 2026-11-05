@@ -14,8 +14,8 @@ Here is a working live [demo](https://elvirkin1392.github.io/check-health/)
 ## Links
 
 - https://tlgrm.ru/docs/bots/api
-- https://cloud.google.com/run/?hl=en
-- https://console.cloud.google.com/
+- https://yandex.cloud/ru/docs/serverless-containers/
+- https://console.yandex.cloud/folders/b1gh4gvssp6enj02a0es
 
 
 ## Layout
@@ -60,7 +60,7 @@ npm run lint
 ```
 
 ## Stack
-React · TypeScript · Vite · Express · MongoDB Atlas · node-cron · Telegram Bot API · JWT · Jest · GitHub Actions · GitHub Pages · Google Cloud Run
+React · TypeScript · Vite · Express · MongoDB Atlas · node-cron · Telegram Bot API · JWT · Jest · GitHub Actions · GitHub Pages · Yandex Cloud Serverless Containers
 
 ## Deployment
 
@@ -68,7 +68,7 @@ Every push to `master` runs three GitHub Actions pipelines automatically:
 
 - **CI** — typecheck, lint, tests, build (client and server)
 - **Deploy client to GitHub Pages** — builds `client/` and publishes it (skipped for server-only changes)
-- **Deploy server to Cloud Run** — deploys the backend via `gcloud run deploy --source .`, which builds the root `Dockerfile` (skipped for client-only changes)
+- **Deploy server to Yandex Cloud** — builds the root `Dockerfile`, pushes the image to Yandex Container Registry, deploys a new revision of the serverless container and points the Telegram webhook at it (skipped for client-only changes)
 
 No manual `npm run deploy` needed for normal changes.
 
@@ -78,9 +78,38 @@ Settings → Secrets and variables → Actions:
 
 | Name | Type | Used for |
 |---|---|---|
-| `GCP_SA_KEY` | Secret | Service account JSON key authenticating the Cloud Run deploy |
-| `CHECK_HEALTH_TELEGRAM_BOT_TOKEN` | Secret | Telegram bot token, passed to Cloud Run |
-| `CHECK_HEALTH_DB_HOST` | Secret | MongoDB Atlas connection string, passed to Cloud Run |
-| `JWT_SECRET` | Secret | Signs login tokens, passed to Cloud Run |
-| `CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET` | Secret | Verifies incoming Telegram webhook requests, passed to Cloud Run |
-| `VITE_CHECK_HEALTH_API_HOST` | Secret or Variable | Backend URL baked into the client build at compile time |
+| `YC_SA_JSON_CREDENTIALS` | Secret | Authorized key of the `check-health-deployer` service account (JSON), authenticates the Yandex Cloud deploy |
+| `CHECK_HEALTH_TELEGRAM_BOT_TOKEN` | Secret | Telegram bot token, passed to the container and used to register the webhook |
+| `CHECK_HEALTH_DB_HOST` | Secret | MongoDB Atlas connection string, passed to the container |
+| `JWT_SECRET` | Secret | Signs login tokens, passed to the container |
+| `CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET` | Secret | Verifies incoming Telegram webhook requests, passed to the container |
+| `VITE_CHECK_HEALTH_API_HOST` | Secret or Variable | Backend URL baked into the client build at compile time: `https://bbagaldqmgffr9jtangg.containers.yandexcloud.net/` |
+
+The client build reads `VITE_CHECK_HEALTH_API_HOST` at compile time, so after changing it re-run
+**Deploy client to GitHub Pages** (Actions → the workflow → Run workflow).
+
+### Yandex Cloud resources
+
+All in folder `default` (`b1gh4gvssp6enj02a0es`). Their ids are in `.github/workflows/deploy-yandex.yml`.
+
+| Resource | Name | Purpose |
+|---|---|---|
+| Serverless container | `check-health` | Runs the server; public URL `https://bbagaldqmgffr9jtangg.containers.yandexcloud.net` |
+| Container registry | `check-health` | Server images, tagged with the commit SHA |
+| Service account | `check-health-deployer` | Used by GitHub Actions: `container-registry.images.pusher`, `serverless-containers.editor`, `iam.serviceAccounts.user` |
+| Service account | `check-health-runtime` | Used by the container to pull its image: `container-registry.images.puller` |
+
+The container must be publicly invocable, or neither Telegram nor the Mini App can reach it:
+
+```
+yc serverless container allow-unauthenticated-invoke --name check-health
+```
+
+Requests are still checked by the server: the webhook by Telegram's secret token, the API by JWT.
+
+To register the webhook by hand (the deploy does it on every run), set `CHECK_HEALTH_TELEGRAM_WEBHOOK_URL`
+and call `GET /api/switchOnWebhook` while logged in.
+
+The container sleeps when there are no requests. Reminders still run on an in-process timer,
+so they only fire while an instance is awake — moving them to a scheduled trigger is
+[spec 006](specs/006-yandex-cloud-hosting/spec.md).

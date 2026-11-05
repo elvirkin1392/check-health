@@ -17,9 +17,17 @@ export const sendMessage = (id: number, options: MessageOptions) => {
   return tgAxios.post(`/sendMessage`, {chat_id: id, ...options}).then(response => response.data);
 }
 
+// The address belongs to wherever the server is deployed, so it comes from the
+// environment. Without it Telegram would be pointed at an empty or stale URL and
+// the bot would go silent, so that is refused rather than sent.
 export const setWebhook = () => {
+  const url = process.env.CHECK_HEALTH_TELEGRAM_WEBHOOK_URL;
+  if (!url) {
+    return Promise.reject(new Error('CHECK_HEALTH_TELEGRAM_WEBHOOK_URL is not set'));
+  }
+
   return tgAxios.post(`/setWebhook`, {
-    url: 'https://check-health-417373288113.europe-north1.run.app/api/listenWebHook',
+    url,
     secret_token: process.env.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET
   }).then(response => response.data);
 }

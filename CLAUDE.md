@@ -37,8 +37,9 @@ npm install
 
 ## Деплой
 
-- Сервер → Cloud Run: `Dockerfile` в корне, собирается `server/` вместе с `shared/`.
-  `.gcloudignore` держит клиент и документацию вне загрузки.
+- Сервер → Yandex Cloud Serverless Containers: `Dockerfile` в корне, собирается `server/`
+  вместе с `shared/`. `.dockerignore` держит клиент и документацию вне образа.
+  Workflow — `.github/workflows/deploy-yandex.yml`, он же регистрирует вебхук Telegram.
 - Клиент → GitHub Pages: `vite build`.
 - Оба — через GitHub Actions на push в `master`.
 
