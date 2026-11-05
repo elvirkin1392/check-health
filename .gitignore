@@ -26,3 +26,6 @@ cloud-sql-proxy
 # Written by the former Cloud Run deploy workflow from GitHub secrets
 env.yaml
 *.tsbuildinfo
+
+# Local state of wrangler dev / deploy
+.wrangler/

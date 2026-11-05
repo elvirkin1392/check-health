@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const TG_TOKEN = process.env.CHECK_HEALTH_TELEGRAM_BOT_TOKEN;
-const tgAxios = axios.create({baseURL: `https://api.telegram.org/bot${TG_TOKEN}`});
+// Yandex Cloud cannot reach api.telegram.org, so in production the Bot API is
+// reached through the relay (relay/), which forwards the same paths unchanged.
+const TG_API_BASE = process.env.CHECK_HEALTH_TELEGRAM_API_BASE || 'https://api.telegram.org';
+const tgAxios = axios.create({baseURL: `${TG_API_BASE}/bot${TG_TOKEN}`});
 
 tgAxios.interceptors.response.use(function (response) {
   return response;
@@ -47,7 +50,7 @@ export const unsetWebhook = () => {
 // исходной ошибке axios лежит `config` с URL, где путь файла и токен бота, и
 // отдавать её наружу незачем — кто-нибудь залогирует её целиком.
 const fileAxios = axios.create({
-  baseURL: `https://api.telegram.org/file/bot${TG_TOKEN}`,
+  baseURL: `${TG_API_BASE}/file/bot${TG_TOKEN}`,
   responseType: 'arraybuffer',
 });
 

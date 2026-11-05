@@ -1,0 +1,12 @@
+# Cloudflare Worker that stands between Telegram and the server in Yandex Cloud,
+# whose network drops traffic to and from Telegram. Deploy: npm run deploy:relay
+name = "check-health-relay"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# The serverless container in Yandex Cloud.
+UPSTREAM = "https://bbagaldqmgffr9jtangg.containers.yandexcloud.net"
+# The numeric part of the bot token before the colon: the bot's own user id, not a
+# secret. Only this bot's Bot API calls are relayed.
+BOT_ID = "7710832275"

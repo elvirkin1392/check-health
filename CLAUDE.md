@@ -40,8 +40,10 @@ npm install
 - Сервер → Yandex Cloud Serverless Containers: `Dockerfile` в корне, собирается `server/`
   вместе с `shared/`. `.dockerignore` держит клиент и документацию вне образа.
   Workflow — `.github/workflows/deploy-yandex.yml`, он же регистрирует вебхук Telegram.
+- Ретранслятор Telegram → Cloudflare Workers (`relay/`, не workspace): сеть Yandex Cloud
+  не пропускает трафик Telegram, поэтому вебхук и вызовы Bot API идут через Worker.
 - Клиент → GitHub Pages: `vite build`.
-- Оба — через GitHub Actions на push в `master`.
+- Все три — через GitHub Actions на push в `master`.
 
 ## Spec-Driven Development
 

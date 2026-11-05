@@ -6,7 +6,9 @@ on:
     paths-ignore:
       - 'client/**'
       - 'specs/**'
+      - 'relay/**'
       - '.github/workflows/deploy-pages.yml'
+      - '.github/workflows/deploy-relay.yml'
   workflow_dispatch:
 
 concurrency:
@@ -21,7 +23,9 @@ env:
   YC_CONTAINER_NAME: check-health
   # The container pulls its image as this account (role container-registry.images.puller).
   YC_RUNTIME_SA_ID: aje86fff3rioecs2u5mf
-  API_URL: https://bbagaldqmgffr9jtangg.containers.yandexcloud.net
+  # Yandex Cloud drops traffic to and from Telegram, so Telegram and the server
+  # reach each other through the Cloudflare Worker in relay/.
+  RELAY_URL: https://check-health-relay.elvirkin1392.workers.dev
 
 jobs:
   deploy:
@@ -68,7 +72,8 @@ jobs:
             --environment "CHECK_HEALTH_DB_HOST=${{ secrets.CHECK_HEALTH_DB_HOST }}" \
             --environment "JWT_SECRET=${{ secrets.JWT_SECRET }}" \
             --environment "CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET=${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}" \
-            --environment "CHECK_HEALTH_TELEGRAM_WEBHOOK_URL=$API_URL/api/listenWebHook"
+            --environment "CHECK_HEALTH_TELEGRAM_WEBHOOK_URL=$RELAY_URL/api/listenWebHook" \
+            --environment "CHECK_HEALTH_TELEGRAM_API_BASE=$RELAY_URL"
 
       # Points Telegram at this deployment. Idempotent, so it runs on every deploy
       # and the webhook can never be left on an old address.
@@ -78,5 +83,5 @@ jobs:
           TG_SECRET: ${{ secrets.CHECK_HEALTH_TELEGRAM_WEBHOOK_SECRET }}
         run: |
           curl -sS --fail-with-body "https://api.telegram.org/bot$TG_TOKEN/setWebhook" \
-            --data-urlencode "url=$API_URL/api/listenWebHook" \
+            --data-urlencode "url=$RELAY_URL/api/listenWebHook" \
             --data-urlencode "secret_token=$TG_SECRET" | grep -q '"ok":true'
